@@ -106,7 +106,7 @@ export function Billing() {
           .from('invoices')
           .select('invoice_number')
           .eq('technician_id', user.id)
-          .order('created_at', { ascending: false })
+          .order('invoice_number', { ascending: false })
           .limit(1)
           .single()
           

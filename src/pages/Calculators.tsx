@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ArrowLeft, Calculator, ThermometerSun, RefreshCcw } from "lucide-react"
+import { ArrowLeft, ThermometerSun, RefreshCcw } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"

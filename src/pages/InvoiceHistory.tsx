@@ -1,4 +1,4 @@
-import { ArrowLeft, FileText, Download, Eye, CheckCircle2, Clock } from "lucide-react"
+import { ArrowLeft, FileText, Download, CheckCircle2, Clock } from "lucide-react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useAuth } from "../contexts/AuthContext"
@@ -118,11 +118,11 @@ export function InvoiceHistory() {
         </div>
       ) : (
         <div className="space-y-6">
-          {Object.entries(groupedInvoices).map(([month, monthInvoices]) => (
+          {(Object.entries(groupedInvoices) as [string, any[]][]).map(([month, monthInvoices]) => (
             <div key={month}>
               <h2 className="text-sm font-bold text-blue-400 mb-3 ml-1 uppercase">{month}</h2>
               <div className="flex flex-col gap-3">
-                {monthInvoices.map((invoice) => (
+                {monthInvoices.map((invoice: any) => (
                   <div 
                     key={invoice.id} 
                     onClick={() => navigate(`/billing/${invoice.id}`)}

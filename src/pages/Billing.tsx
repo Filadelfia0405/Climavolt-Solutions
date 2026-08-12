@@ -523,7 +523,7 @@ export function Billing() {
               </tr>
             </thead>
             <tbody>
-              {items.map((item, idx) => (
+              {items.map((item) => (
                 <tr key={item.id} className="border-b border-slate-800 last:border-0 bg-slate-800/50">
                   <td className="px-2 py-1">
                     <input 

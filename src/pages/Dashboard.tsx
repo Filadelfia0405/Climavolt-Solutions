@@ -1,4 +1,4 @@
-import { Bell, AlertTriangle, Calculator, Scan, BookOpen, DollarSign, ClipboardList, ChevronRight, Zap, Users, FileText } from "lucide-react"
+import { Bell, AlertTriangle, Calculator, BookOpen, ClipboardList, Zap, Users, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"
@@ -112,11 +112,6 @@ export function Dashboard() {
                 <span className="text-[11px] font-medium leading-tight text-slate-300">
                   {tool.label}
                 </span>
-                {tool.badge && (
-                  <span className="absolute -right-1 -top-1 rounded-full bg-blue-600 px-1.5 py-0.5 text-[8px] font-bold text-white shadow-sm">
-                    {tool.badge}
-                  </span>
-                )}
               </button>
             )
           })}

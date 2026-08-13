@@ -9,7 +9,7 @@ export async function analyzeErrorCode(code: string, brand: string): Promise<str
     throw new Error('API Key no configurada. Por favor, añade VITE_GEMINI_API_KEY en Vercel.');
   }
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
   const prompt = `
 Eres un técnico experto en refrigeración, aire acondicionado y climatización (HVAC).

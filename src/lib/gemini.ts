@@ -33,6 +33,6 @@ Usa títulos, viñetas y texto en negrita donde sea apropiado. Sé directo, sin 
     return response.text();
   } catch (error) {
     console.error('Error in analyzeErrorCode:', error);
-    throw new Error('No se pudo analizar el código de error con la IA en este momento.');
+    throw new Error('Error IA: ' + (error instanceof Error ? error.message : String(error)));
   }
 }

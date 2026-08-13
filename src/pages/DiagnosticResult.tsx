@@ -43,13 +43,19 @@ export function DiagnosticResult() {
         }
         
         const modelsData = await modelsRes.json();
-        // Buscar un modelo que soporte generateContent y sea de la familia gemini
         const availableModels = modelsData.models || [];
-        const validModel = availableModels.find((m: any) => 
+        
+        // Filter out vision models and the deprecated 2.5 series
+        const validModels = availableModels.filter((m: any) => 
           m.supportedGenerationMethods?.includes("generateContent") && 
           m.name.includes("gemini") &&
-          !m.name.includes("vision")
+          !m.name.includes("vision") &&
+          !m.name.includes("2.5")
         );
+
+        // Sort descending to get the latest model (e.g. 3.x)
+        validModels.sort((a: any, b: any) => b.name.localeCompare(a.name));
+        const validModel = validModels[0];
 
         if (!validModel) {
           throw new Error("No se encontró ningún modelo compatible en esta API Key.");

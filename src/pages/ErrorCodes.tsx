@@ -15,6 +15,7 @@ export function ErrorCodes() {
   const navigate = useNavigate()
   const [searchCode, setSearchCode] = useState("")
   const [searchBrand, setSearchBrand] = useState("")
+  const [activeSearch, setActiveSearch] = useState({ code: "", brand: "" })
   const [errorCodes, setErrorCodes] = useState<ErrorCode[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -39,8 +40,8 @@ export function ErrorCodes() {
 
   const filteredCodes = errorCodes.filter(
     (err) => 
-      err.code.toLowerCase().includes(searchCode.toLowerCase()) && 
-      err.brand.toLowerCase().includes(searchBrand.toLowerCase())
+      err.code.toLowerCase().includes(activeSearch.code.toLowerCase()) && 
+      err.brand.toLowerCase().includes(activeSearch.brand.toLowerCase())
   )
 
   return (
@@ -75,6 +76,13 @@ export function ErrorCodes() {
             className="w-full rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-12 pr-4 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
+        <button 
+          onClick={() => setActiveSearch({ code: searchCode, brand: searchBrand })}
+          className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 active:bg-blue-800 shadow-lg shadow-blue-600/20"
+        >
+          <Search size={18} />
+          Buscar error
+        </button>
       </div>
 
       {/* List */}

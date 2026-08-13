@@ -37,8 +37,9 @@ export function DiagnosticResult() {
         }
 
         const genAI = new GoogleGenerativeAI(apiKey);
+        // Usamos gemini-1.5-pro o gemini-pro que tienen mayor compatibilidad
         const model = genAI.getGenerativeModel({ 
-          model: "gemini-1.5-flash",
+          model: "gemini-1.5-pro",
           generationConfig: {
             responseMimeType: "application/json"
           }
@@ -53,8 +54,20 @@ Responde ÚNICAMENTE con un objeto JSON válido con esta estructura exacta:
 }
 Asegúrate de que las probabilidades sumen 100 y de que los pasos sean claros y técnicos.`;
 
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
+        let responseText = "";
+        try {
+          const result = await model.generateContent(prompt);
+          responseText = result.response.text();
+        } catch (e: any) {
+          if (e.message && e.message.includes("404")) {
+            console.log("gemini-1.5-pro failed with 404, trying gemini-pro...");
+            const fallbackModel = genAI.getGenerativeModel({ model: "gemini-pro" });
+            const result = await fallbackModel.generateContent(prompt);
+            responseText = result.response.text();
+          } else {
+            throw e;
+          }
+        }
         
         let parsedData: DiagnosticData;
         try {

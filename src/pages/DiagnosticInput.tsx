@@ -10,7 +10,8 @@ export function DiagnosticInput() {
   const [code, setCode] = useState("P6")
 
   const handleContinue = () => {
-    navigate("/diagnostico/resultado")
+    if (!code.trim()) return;
+    navigate("/diagnostico/resultado", { state: { code } });
   }
 
   return (

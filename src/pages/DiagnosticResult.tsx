@@ -36,10 +36,31 @@ export function DiagnosticResult() {
           throw new Error("No se encontró la API Key de Gemini (VITE_GEMINI_API_KEY).");
         }
 
+        // Fetch available models to avoid 404 errors with specific API keys
+        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        if (!modelsRes.ok) {
+          throw new Error("Error verificando los modelos disponibles con la API Key proporcionada.");
+        }
+        
+        const modelsData = await modelsRes.json();
+        // Buscar un modelo que soporte generateContent y sea de la familia gemini
+        const availableModels = modelsData.models || [];
+        const validModel = availableModels.find((m: any) => 
+          m.supportedGenerationMethods?.includes("generateContent") && 
+          m.name.includes("gemini") &&
+          !m.name.includes("vision")
+        );
+
+        if (!validModel) {
+          throw new Error("No se encontró ningún modelo compatible en esta API Key.");
+        }
+
+        const modelName = validModel.name.replace("models/", "");
+        console.log("Using dynamic model:", modelName);
+
         const genAI = new GoogleGenerativeAI(apiKey);
-        // Usamos gemini-1.5-pro o gemini-pro que tienen mayor compatibilidad
         const model = genAI.getGenerativeModel({ 
-          model: "gemini-1.5-pro",
+          model: modelName,
           generationConfig: {
             responseMimeType: "application/json"
           }
@@ -54,20 +75,8 @@ Responde ÚNICAMENTE con un objeto JSON válido con esta estructura exacta:
 }
 Asegúrate de que las probabilidades sumen 100 y de que los pasos sean claros y técnicos.`;
 
-        let responseText = "";
-        try {
-          const result = await model.generateContent(prompt);
-          responseText = result.response.text();
-        } catch (e: any) {
-          if (e.message && e.message.includes("404")) {
-            console.log("gemini-1.5-pro failed with 404, trying gemini-pro...");
-            const fallbackModel = genAI.getGenerativeModel({ model: "gemini-pro" });
-            const result = await fallbackModel.generateContent(prompt);
-            responseText = result.response.text();
-          } else {
-            throw e;
-          }
-        }
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
         
         let parsedData: DiagnosticData;
         try {

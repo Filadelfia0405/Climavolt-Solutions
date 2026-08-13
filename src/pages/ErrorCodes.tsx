@@ -13,7 +13,8 @@ interface ErrorCode {
 
 export function ErrorCodes() {
   const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchCode, setSearchCode] = useState("")
+  const [searchBrand, setSearchBrand] = useState("")
   const [errorCodes, setErrorCodes] = useState<ErrorCode[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -38,8 +39,8 @@ export function ErrorCodes() {
 
   const filteredCodes = errorCodes.filter(
     (err) => 
-      err.code.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      err.brand.toLowerCase().includes(searchTerm.toLowerCase())
+      err.code.toLowerCase().includes(searchCode.toLowerCase()) && 
+      err.brand.toLowerCase().includes(searchBrand.toLowerCase())
   )
 
   return (
@@ -52,16 +53,28 @@ export function ErrorCodes() {
         <h1 className="text-lg font-semibold text-white">Códigos de Error</h1>
       </header>
 
-      {/* Search Bar */}
-      <div className="mt-4 relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-        <input
-          type="text"
-          placeholder="Buscar por código o marca..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-12 pr-4 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
+      {/* Search Bars */}
+      <div className="mt-4 flex flex-col gap-3">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+          <input
+            type="text"
+            placeholder="Error del equipo (ej. E1, F2)..."
+            value={searchCode}
+            onChange={(e) => setSearchCode(e.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-12 pr-4 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+          <input
+            type="text"
+            placeholder="Marca de equipo (ej. Lennox, Carrier)..."
+            value={searchBrand}
+            onChange={(e) => setSearchBrand(e.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-12 pr-4 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
       </div>
 
       {/* List */}

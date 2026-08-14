@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"
 import { Button } from "../components/ui/button"
+import { useNotifications } from "../hooks/useNotifications"
 
 const QUICK_TOOLS = [
   { icon: AlertTriangle, label: "Códigos de error", color: "bg-red-500/20 text-red-500", path: "/error-codes" },
@@ -30,6 +31,7 @@ const RECENT_ACCESS = [
 
 export function Dashboard() {
   const navigate = useNavigate()
+  const { unreadCount } = useNotifications()
 
   return (
     <div className="flex flex-col gap-6 p-4">
@@ -44,9 +46,14 @@ export function Dashboard() {
             <p className="text-xs text-slate-400">Tu app profesional HVAC</p>
           </div>
         </div>
-        <button className="relative rounded-full p-2 text-slate-300 hover:bg-slate-800">
+        <button 
+          onClick={() => navigate('/notificaciones')}
+          className="relative rounded-full p-2 text-slate-300 hover:bg-slate-800 transition-colors"
+        >
           <Bell size={24} />
-          <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-slate-950 bg-red-500" />
+          {unreadCount > 0 && (
+            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-slate-950 bg-red-500 animate-pulse" />
+          )}
         </button>
       </header>
 

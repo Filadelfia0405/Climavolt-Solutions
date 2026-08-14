@@ -9,7 +9,32 @@ export async function analyzeErrorCode(code: string, brand: string): Promise<str
     throw new Error('API Key no configurada. Por favor, añade VITE_GEMINI_API_KEY en Vercel.');
   }
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+  // Fetch available models dynamically to avoid 404 errors with specific API keys
+  const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+  if (!modelsRes.ok) {
+    throw new Error("Error verificando los modelos disponibles con la API Key proporcionada.");
+  }
+  
+  const modelsData = await modelsRes.json();
+  const availableModels = modelsData.models || [];
+  
+  // Filter out vision models and deprecated versions
+  const validModels = availableModels.filter((m: any) => 
+    m.supportedGenerationMethods?.includes("generateContent") && 
+    m.name.includes("gemini") &&
+    !m.name.includes("vision") &&
+    !m.name.includes("2.5")
+  );
+
+  validModels.sort((a: any, b: any) => b.name.localeCompare(a.name));
+  const validModel = validModels[0];
+
+  if (!validModel) {
+    throw new Error("No se encontró ningún modelo compatible en esta API Key.");
+  }
+
+  const modelName = validModel.name.replace("models/", "");
+  const model = genAI.getGenerativeModel({ model: modelName });
 
   const prompt = `
 Eres un técnico experto en refrigeración, aire acondicionado y climatización (HVAC).

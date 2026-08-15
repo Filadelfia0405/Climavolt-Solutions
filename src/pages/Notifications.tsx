@@ -14,7 +14,7 @@ export function Notifications() {
       <header className="mb-6 flex items-center justify-between pt-2">
         <div className="flex items-center gap-3">
           <button 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/')}
             className="rounded-full bg-slate-800 p-2 text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
           >
             <ArrowLeft size={20} />

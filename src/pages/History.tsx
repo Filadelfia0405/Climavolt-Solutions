@@ -72,7 +72,7 @@ export function History() {
       {/* Header */}
       <header className="flex items-center justify-between py-2">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="p-2 text-slate-300 hover:text-white -ml-2">
+          <button onClick={() => navigate('/')} className="p-2 text-slate-300 hover:text-white -ml-2">
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold text-white">Historial de Equipos</h1>

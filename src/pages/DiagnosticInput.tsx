@@ -18,7 +18,7 @@ export function DiagnosticInput() {
     <div className="flex flex-col min-h-screen bg-slate-950 p-4 pb-24">
       {/* Header */}
       <header className="flex items-center gap-4 py-2">
-        <button onClick={() => navigate(-1)} className="p-2 text-slate-300 hover:text-white">
+        <button onClick={() => navigate('/')} className="p-2 text-slate-300 hover:text-white">
           <ArrowLeft size={24} />
         </button>
         <h1 className="text-lg font-semibold text-white">Diagnóstico inteligente</h1>

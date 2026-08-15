@@ -1,9 +1,10 @@
-import { Bell, AlertTriangle, Calculator, ClipboardList, Zap, Users, FileText, DollarSign } from "lucide-react"
+import { Bell, AlertTriangle, Calculator, ClipboardList, Users, FileText, DollarSign } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 import { useNotifications } from "../hooks/useNotifications"
+import { logoBase64 } from "../assets/logoBase64"
 
 const QUICK_TOOLS = [
   { icon: AlertTriangle, label: "Códigos de error", color: "bg-red-500/20 text-red-500", path: "/error-codes" },
@@ -37,13 +38,16 @@ export function Dashboard() {
     <div className="flex flex-col gap-6 p-4">
       {/* Header */}
       <header className="flex items-center justify-between pt-2">
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
-            <Zap size={24} className="text-white" fill="currentColor" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">ClimaVolt</h1>
-            <p className="text-xs text-slate-400">Tu app profesional HVAC</p>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center bg-white rounded-xl px-3 py-2 shadow-lg shadow-white/5">
+            <img 
+              src={logoBase64} 
+              alt="ClimaVolt" 
+              className="h-6 w-auto object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
           </div>
         </div>
         <button 

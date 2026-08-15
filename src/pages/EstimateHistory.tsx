@@ -1,17 +1,14 @@
-import { ArrowLeft, FileText, Download, CheckCircle2, Clock } from "lucide-react"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { ArrowLeft, FileText, Download, CheckCircle2 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { supabase } from "../lib/supabase"
 
-export function InvoiceHistory() {
+export function EstimateHistory() {
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
   const [invoices, setInvoices] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-
-  const currentTab = searchParams.get('status') || 'all'
 
   const fetchInvoices = async () => {
       if (!user) return
@@ -20,7 +17,7 @@ export function InvoiceHistory() {
         .from('invoices')
         .select('*')
         .eq('technician_id', user.id)
-        .neq('status', 'estimate')
+        .eq('status', 'estimate')
         .order('date', { ascending: false })
       
       if (data && !error) {
@@ -38,25 +35,20 @@ export function InvoiceHistory() {
     try {
       const { error } = await supabase
         .from('invoices')
-        .update({ status: 'paid' })
+        .update({ status: 'pending' }) // Convertir a factura pendiente
         .eq('id', id)
       
       if (error) throw error
-      
-      // Update local state without refetching
-      setInvoices(invoices.map(inv => inv.id === id ? { ...inv, status: 'paid' } : inv))
+      alert("Convertido a factura exitosamente. Revisar en Facturas.")
+      fetchInvoices()
     } catch (error) {
       console.error('Error al actualizar estado:', error)
-      alert("Error al marcar como pagada")
+      alert("Error al convertir a factura")
     }
   }
 
   // Filter invoices based on tab
-  const filteredInvoices = invoices.filter(invoice => {
-    if (currentTab === 'pending') return invoice.status === 'pending'
-    if (currentTab === 'paid') return invoice.status !== 'pending'
-    return true
-  })
+  const filteredInvoices = invoices
 
   // Group invoices by month
   const groupedInvoices = filteredInvoices.reduce((acc, invoice) => {
@@ -82,30 +74,9 @@ export function InvoiceHistory() {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-white">Historial de Facturas</h1>
-            <p className="text-xs text-slate-400">Tus facturas y presupuestos emitidos</p>
+            <h1 className="text-xl font-bold text-white">Historial de Presupuestos</h1>
+            <p className="text-xs text-slate-400">Tus presupuestos emitidos</p>
           </div>
-        </div>
-
-        <div className="flex bg-slate-800/50 p-1 rounded-xl">
-          <button 
-            onClick={() => setSearchParams({})}
-            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${currentTab === 'all' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
-          >
-            Todas
-          </button>
-          <button 
-            onClick={() => setSearchParams({ status: 'pending' })}
-            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${currentTab === 'pending' ? 'bg-red-500 text-white' : 'text-slate-400 hover:text-white'}`}
-          >
-            Pendientes
-          </button>
-          <button 
-            onClick={() => setSearchParams({ status: 'paid' })}
-            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${currentTab === 'paid' ? 'bg-green-500 text-white' : 'text-slate-400 hover:text-white'}`}
-          >
-            Pagadas
-          </button>
         </div>
       </header>
 
@@ -114,8 +85,8 @@ export function InvoiceHistory() {
       ) : invoices.length === 0 ? (
         <div className="text-center mt-20 flex flex-col items-center">
           <FileText size={48} className="text-slate-600 mb-4" />
-          <h2 className="text-lg font-bold text-white mb-2">No hay facturas</h2>
-          <p className="text-sm text-slate-400">Aún no has emitido ninguna factura o presupuesto.</p>
+          <h2 className="text-lg font-bold text-white mb-2">No hay presupuestos</h2>
+          <p className="text-sm text-slate-400">Aún no has emitido ningún presupuesto.</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -126,16 +97,16 @@ export function InvoiceHistory() {
                 {monthInvoices.map((invoice: any) => (
                   <div 
                     key={invoice.id} 
-                    onClick={() => navigate(`/billing/${invoice.id}`)}
+                    onClick={() => navigate(`/presupuestos/${invoice.id}`)}
                     className="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border border-slate-800 bg-slate-900/50 p-4 hover:bg-slate-800 cursor-pointer transition-colors"
                   >
                     <div className="flex items-start gap-3 mb-3 sm:mb-0">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-lg shrink-0 ${invoice.status === 'pending' ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`}>
-                        {invoice.status === 'pending' ? <Clock size={20} /> : <FileText size={20} />}
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg shrink-0 bg-blue-500/20 text-blue-500">
+                        <FileText size={20} />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-bold text-white">Factura Nº {invoice.invoice_number}</h4>
+                          <h4 className="text-sm font-bold text-white">Presupuesto Nº {invoice.invoice_number}</h4>
                         </div>
                         <p className="text-sm text-slate-300 font-medium truncate max-w-[200px]">{invoice.client_name || "Cliente sin nombre"}</p>
                         <p className="text-xs text-slate-500">{new Date(invoice.date).toLocaleDateString('es-ES')}</p>
@@ -145,15 +116,13 @@ export function InvoiceHistory() {
                     <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 w-full sm:w-auto">
                       <span className="text-base font-bold text-white">RD$ {invoice.total.toFixed(2)}</span>
                       <div className="flex gap-2">
-                        {invoice.status === 'pending' && (
-                          <button 
-                            onClick={(e) => markAsPaid(e, invoice.id)}
-                            className="flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-full bg-green-500/20 text-green-500 hover:bg-green-500 hover:text-white transition-colors"
-                            title="Marcar como pagada"
-                          >
-                            <CheckCircle2 size={14} /> Pagar
-                          </button>
-                        )}
+                        <button 
+                          onClick={(e) => markAsPaid(e, invoice.id)}
+                          className="flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-full bg-green-500/20 text-green-500 hover:bg-green-500 hover:text-white transition-colors"
+                          title="Convertir a Factura"
+                        >
+                          <CheckCircle2 size={14} /> Facturar
+                        </button>
                         <button 
                           className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600/20 text-blue-500 hover:bg-blue-600 hover:text-white transition-colors"
                           title="Ver y descargar"

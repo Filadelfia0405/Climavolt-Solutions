@@ -14,6 +14,8 @@ import { Clients } from "./pages/Clients"
 import { Tools } from "./pages/Tools"
 import { Billing } from "./pages/Billing"
 import { InvoiceHistory } from "./pages/InvoiceHistory"
+import { Estimates } from "./pages/Estimates"
+import { EstimateHistory } from "./pages/EstimateHistory"
 import { Notifications } from "./pages/Notifications"
 
 export default function App() {
@@ -36,6 +38,9 @@ export default function App() {
               <Route path="/billing" element={<Billing />} />
               <Route path="/billing/:id" element={<Billing />} />
               <Route path="/invoice-history" element={<InvoiceHistory />} />
+              <Route path="/presupuestos" element={<Estimates />} />
+              <Route path="/presupuestos/:id" element={<Estimates />} />
+              <Route path="/estimate-history" element={<EstimateHistory />} />
               <Route path="/notificaciones" element={<Notifications />} />
             </Route>
           </Route>

@@ -1,4 +1,4 @@
-import { Bell, AlertTriangle, Calculator, BookOpen, ClipboardList, Zap, Users, FileText } from "lucide-react"
+import { Bell, AlertTriangle, Calculator, ClipboardList, Zap, Users, FileText, DollarSign } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"
@@ -10,7 +10,7 @@ const QUICK_TOOLS = [
   { icon: Calculator, label: "Calculadoras", color: "bg-green-500/20 text-green-500", path: "/calculators" },
   { icon: FileText, label: "Facturación", color: "bg-yellow-500/20 text-yellow-500", path: "/billing" },
   { icon: Users, label: "Clientes", color: "bg-indigo-500/20 text-indigo-500", path: "/clients" },
-  { icon: BookOpen, label: "Manuales", color: "bg-blue-500/20 text-blue-500", path: "/manuals" },
+  { icon: DollarSign, label: "Presupuestos", color: "bg-orange-500/20 text-orange-500", path: "/presupuestos" },
   { icon: ClipboardList, label: "Hist. Facturas", color: "bg-teal-500/20 text-teal-500", path: "/invoice-history" },
 ]
 

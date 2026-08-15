@@ -7,9 +7,10 @@ interface InvoicePrintProps {
   subtotal: number;
   tax: number;
   total: number;
+  documentType?: "FACTURA" | "PRESUPUESTO";
 }
 
-export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, subtotal, tax, total }) => {
+export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, subtotal, tax, total, documentType = "FACTURA" }) => {
   return (
     <div 
       id="printable-invoice" 
@@ -30,9 +31,9 @@ export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, sub
         </div>
         
         <div className="text-right">
-          <h1 className="text-3xl font-bold text-blue-600 mb-2 uppercase">FACTURA</h1>
+          <h1 className="text-3xl font-bold text-blue-600 mb-2 uppercase">{documentType}</h1>
           <div className="flex justify-end gap-4 text-sm mb-1">
-            <span className="font-bold text-gray-700">Nº de Factura:</span>
+            <span className="font-bold text-gray-700">Nº de {documentType === 'FACTURA' ? 'Factura' : 'Presupuesto'}:</span>
             <span className="text-gray-900">{formData.invoiceNumber}</span>
           </div>
           <div className="flex justify-end gap-4 text-sm">
@@ -81,18 +82,25 @@ export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, sub
             <th className="py-2 px-4 font-semibold">Descripción</th>
             <th className="py-2 px-4 font-semibold text-center">Cant.</th>
             <th className="py-2 px-4 font-semibold text-right">Precio Unit.</th>
+            <th className="py-2 px-4 font-semibold text-right">Desc.</th>
             <th className="py-2 px-4 font-semibold text-right">Total</th>
           </tr>
         </thead>
         <tbody className="text-sm text-gray-800">
-          {items.map((item, idx) => (
-            <tr key={idx} className="border-b border-gray-200">
-              <td className="py-3 px-4">{item.description || 'Servicio General'}</td>
-              <td className="py-3 px-4 text-center">{item.quantity}</td>
-              <td className="py-3 px-4 text-right">RD$ {item.unitPrice.toFixed(2)}</td>
-              <td className="py-3 px-4 text-right">RD$ {(item.quantity * item.unitPrice).toFixed(2)}</td>
-            </tr>
-          ))}
+          {items.map((item, idx) => {
+            const rowTotal = item.quantity * item.unitPrice;
+            const discountAmount = rowTotal * ((item.discountPercentage || 0) / 100);
+            const finalTotal = rowTotal - discountAmount;
+            return (
+              <tr key={idx} className="border-b border-gray-200">
+                <td className="py-3 px-4">{item.description || 'Servicio General'}</td>
+                <td className="py-3 px-4 text-center">{item.quantity}</td>
+                <td className="py-3 px-4 text-right">RD$ {item.unitPrice.toFixed(2)}</td>
+                <td className="py-3 px-4 text-right">{item.discountPercentage ? `${item.discountPercentage}%` : '-'}</td>
+                <td className="py-3 px-4 text-right">RD$ {finalTotal.toFixed(2)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 

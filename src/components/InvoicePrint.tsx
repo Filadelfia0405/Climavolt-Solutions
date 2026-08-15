@@ -107,18 +107,32 @@ export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, sub
       {/* Totals */}
       <div className="flex justify-end mb-8">
         <div className="w-1/2">
-          <div className="flex justify-between py-2 text-sm text-gray-700 border-b border-gray-200">
-            <span>Subtotal:</span>
-            <span>RD$ {subtotal.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between py-2 text-sm text-gray-700 border-b border-gray-200">
-            <span>ITBIS (18%):</span>
-            <span>RD$ {tax.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between py-3 text-lg font-bold text-blue-600">
-            <span>TOTAL:</span>
-            <span>RD$ {total.toFixed(2)}</span>
-          </div>
+          {(() => {
+            const grossSubtotal = items.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
+            const totalDiscount = grossSubtotal - subtotal;
+            return (
+              <>
+                <div className="flex justify-between py-2 text-sm text-gray-700 border-b border-gray-200">
+                  <span>Subtotal:</span>
+                  <span>RD$ {grossSubtotal.toFixed(2)}</span>
+                </div>
+                {totalDiscount > 0 && (
+                  <div className="flex justify-between py-2 text-sm text-red-600 border-b border-gray-200">
+                    <span>Descuento Aplicado:</span>
+                    <span>- RD$ {totalDiscount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between py-2 text-sm text-gray-700 border-b border-gray-200">
+                  <span>ITBIS (18%):</span>
+                  <span>RD$ {tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between py-3 text-lg font-bold text-blue-600">
+                  <span>TOTAL:</span>
+                  <span>RD$ {total.toFixed(2)}</span>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </div>
 

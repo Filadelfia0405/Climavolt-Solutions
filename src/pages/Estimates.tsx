@@ -158,11 +158,13 @@ export function Estimates() {
 
 
   // Calculations
+  const grossSubtotal = items.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0)
   const subtotal = items.reduce((acc, item) => {
     const rowTotal = item.quantity * item.unitPrice;
     const discountAmount = rowTotal * ((item.discountPercentage || 0) / 100);
     return acc + (rowTotal - discountAmount);
   }, 0)
+  const totalDiscount = grossSubtotal - subtotal;
   const tax = applyItbis ? subtotal * 0.18 : 0
   const total = subtotal + tax
 
@@ -647,8 +649,14 @@ export function Estimates() {
             <div className="rounded-lg overflow-hidden border border-blue-900/50 bg-slate-800/50">
                <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
                  <span className="text-sm font-semibold text-slate-300">SUBTOTAL</span>
-                 <span className="text-sm font-bold text-white">RD$ {subtotal.toFixed(2)}</span>
+                 <span className="text-sm font-bold text-white">RD$ {grossSubtotal.toFixed(2)}</span>
                </div>
+               {totalDiscount > 0 && (
+                 <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
+                   <span className="text-sm font-semibold text-red-400">DESCUENTO</span>
+                   <span className="text-sm font-bold text-red-400">- RD$ {totalDiscount.toFixed(2)}</span>
+                 </div>
+               )}
                <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
                  <div className="flex items-center gap-2">
                    <input 

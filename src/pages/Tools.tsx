@@ -1,11 +1,10 @@
-import { ArrowLeft, AlertTriangle, Calculator, Scan, BookOpen, DollarSign, ClipboardList, Users, FileText } from "lucide-react"
+import { ArrowLeft, AlertTriangle, Calculator, BookOpen, DollarSign, ClipboardList, Users, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 
 const ALL_TOOLS = [
   { icon: AlertTriangle, label: "Códigos de error", color: "bg-red-500/20 text-red-500", path: "/error-codes" },
   { icon: Calculator, label: "Calculadoras", color: "bg-green-500/20 text-green-500", path: "/calculators" },
-  { icon: Scan, label: "Escáner de placas", badge: "IA", color: "bg-purple-500/20 text-purple-500", path: "/scanner" },
   { icon: Users, label: "Registro de Clientes", color: "bg-indigo-500/20 text-indigo-500", path: "/clients" },
   { icon: FileText, label: "Facturación", color: "bg-yellow-500/20 text-yellow-500", path: "/billing" },
   { icon: BookOpen, label: "Manuales", color: "bg-blue-500/20 text-blue-500", path: "/manuals" },

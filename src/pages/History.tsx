@@ -12,6 +12,7 @@ interface HistoryRecord {
   maintenance_type: string
   status: string
   date: string
+  diagnostic?: string
   equipments: {
     customer_name: string
     address: string
@@ -36,7 +37,8 @@ export function History() {
     address: "",
     maintenance_type: "Mantenimiento Preventivo",
     status: "Completado",
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    diagnostic: ""
   })
 
   useEffect(() => {
@@ -72,6 +74,7 @@ export function History() {
           maintenance_type,
           status,
           date,
+          diagnostic,
           equipments (
             customer_name,
             address,
@@ -120,7 +123,8 @@ export function History() {
           equipment_id: equipmentId,
           maintenance_type: formData.maintenance_type,
           status: formData.status,
-          date: formData.date
+          date: formData.date,
+          diagnostic: formData.diagnostic
         }])
 
       if (historyError) throw historyError
@@ -134,7 +138,8 @@ export function History() {
         address: "",
         maintenance_type: "Mantenimiento Preventivo",
         status: "Completado",
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        diagnostic: ""
       })
 
     } catch (error) {
@@ -282,6 +287,17 @@ export function History() {
                   />
                 </div>
 
+                <div>
+                  <label className="text-xs font-medium text-slate-400 mb-1 block">Último Diagnóstico</label>
+                  <textarea
+                    value={formData.diagnostic}
+                    onChange={(e) => setFormData({...formData, diagnostic: e.target.value})}
+                    className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none"
+                    placeholder="Escribe el diagnóstico aquí..."
+                    rows={3}
+                  />
+                </div>
+
                 <div className="flex gap-3 mt-2">
                   <Button type="button" onClick={() => setShowForm(false)} className="flex-1 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white">
                     Cancelar
@@ -341,6 +357,12 @@ export function History() {
                        <Calendar size={14} />
                        <span>{new Date(item.date).toLocaleDateString()}</span>
                      </div>
+                     {item.diagnostic && (
+                       <div className="mt-2 pt-2 border-t border-slate-800 text-xs text-slate-300 bg-slate-900/30 p-2 rounded">
+                         <span className="font-semibold text-blue-400 block mb-1">Último Diagnóstico:</span>
+                         {item.diagnostic}
+                       </div>
+                     )}
                   </div>
                </div>
             </Card>

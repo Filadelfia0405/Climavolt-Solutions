@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import { ArrowLeft, User, LogOut, Mail, Settings, Shield } from "lucide-react"
 import { Card, CardContent } from "../components/ui/card"
-import { Button } from "../components/ui/button"
 import { motion } from "framer-motion"
 
 export function Profile() {

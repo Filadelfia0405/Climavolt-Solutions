@@ -1,10 +1,13 @@
-import { Bell, AlertTriangle, Calculator, ClipboardList, Users, FileText, DollarSign } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Bell, AlertTriangle, Calculator, ClipboardList, Users, FileText, DollarSign, Loader2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 import { useNotifications } from "../hooks/useNotifications"
 import { logoBase64 } from "../assets/logoBase64"
+import { useAuth } from "../contexts/AuthContext"
+import { supabase } from "../lib/supabase"
 
 const QUICK_TOOLS = [
   { icon: AlertTriangle, label: "Códigos de error", color: "bg-red-500/20 text-red-500", path: "/error-codes" },
@@ -15,24 +18,60 @@ const QUICK_TOOLS = [
   { icon: ClipboardList, label: "Hist. Facturas", color: "bg-teal-500/20 text-teal-500", path: "/invoice-history" },
 ]
 
-const RECENT_ACCESS = [
-  { 
-    id: 1, 
-    model: "Midea Inverter 12K", 
-    desc: "Último diagnóstico: Error E4", 
-    date: "20 May 2025" 
-  },
-  { 
-    id: 2, 
-    model: "LG Dual Inverter 18K", 
-    desc: "Mantenimiento completo", 
-    date: "18 May 2025" 
-  },
-]
+interface RecentAccessItem {
+  id: string
+  model: string
+  desc: string
+  date: string
+}
 
 export function Dashboard() {
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
+  const { user } = useAuth()
+  const [recentAccess, setRecentAccess] = useState<RecentAccessItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchRecentHistory() {
+      if (!user) return
+      setIsLoading(true)
+      try {
+        const { data, error } = await supabase
+          .from("history")
+          .select(`
+            id,
+            date,
+            diagnostic,
+            maintenance_type,
+            equipments (
+              model
+            )
+          `)
+          .eq("technician_id", user.id)
+          .order("date", { ascending: false })
+          .limit(2)
+
+        if (error) throw error
+
+        if (data) {
+          const formatted = data.map((item: any) => ({
+            id: item.id,
+            model: item.equipments?.model || "Equipo desconocido",
+            desc: item.diagnostic ? `Último diagnóstico: ${item.diagnostic}` : item.maintenance_type,
+            date: new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+          }))
+          setRecentAccess(formatted)
+        }
+      } catch (error) {
+        console.error("Error fetching recent history:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchRecentHistory()
+  }, [user])
 
   return (
     <div className="flex flex-col gap-6 p-4">
@@ -69,7 +108,7 @@ export function Dashboard() {
       >
         <Card className="relative overflow-hidden border-blue-900/50 bg-[#0f192d]">
           <CardContent className="relative flex p-6 min-h-[180px]">
-            {/* Contenido de texto (Z-index superior para estar encima si hay superposición) */}
+            {/* Contenido de texto */}
             <div className="relative z-20 flex w-2/3 flex-col justify-center pr-4">
               <h2 className="mb-2 text-xl font-bold text-white tracking-tight leading-tight">Diagnóstico inteligente</h2>
               <p className="mb-4 text-sm text-slate-300 leading-snug">
@@ -84,9 +123,7 @@ export function Dashboard() {
             
             {/* Imagen a la derecha */}
             <div className="absolute inset-y-0 right-[-10%] w-[55%] z-10 pointer-events-none flex items-center">
-              {/* Degradado para transición suave entre texto e imagen */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#0f192d] via-transparent to-transparent z-10" />
-              
               <img 
                 src="/condenser.png" 
                 alt="Condensadora" 
@@ -140,27 +177,38 @@ export function Dashboard() {
           <button onClick={() => navigate('/history')} className="text-sm text-blue-500 hover:underline">Ver todo</button>
         </div>
         <div className="flex flex-col gap-3">
-          {RECENT_ACCESS.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between rounded-2xl border border-slate-800/50 bg-slate-900/50 p-4 hover:bg-slate-800 cursor-pointer transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 text-slate-400">
-                   <div className="h-6 w-8 border border-slate-600 rounded-sm flex items-center justify-center relative">
-                      <div className="w-4 h-4 rounded-full border border-slate-500" />
-                   </div>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white">{item.model}</h4>
-                  <p className="text-xs text-slate-400">{item.desc}</p>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <span className="text-[10px] text-slate-500">{item.date}</span>
-              </div>
+          {isLoading ? (
+            <div className="flex justify-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
             </div>
-          ))}
+          ) : recentAccess.length > 0 ? (
+            recentAccess.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => navigate('/history')}
+                className="flex items-center justify-between rounded-2xl border border-slate-800/50 bg-slate-900/50 p-4 hover:bg-slate-800 cursor-pointer transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 text-slate-400">
+                     <div className="h-6 w-8 border border-slate-600 rounded-sm flex items-center justify-center relative">
+                        <div className="w-4 h-4 rounded-full border border-slate-500" />
+                     </div>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white">{item.model}</h4>
+                    <p className="text-xs text-slate-400 truncate max-w-[150px]">{item.desc}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-[10px] text-slate-500">{item.date}</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-sm text-slate-500 py-4">
+              No hay equipos recientes
+            </div>
+          )}
         </div>
       </motion.div>
     </div>

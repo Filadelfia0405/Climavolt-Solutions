@@ -19,6 +19,7 @@ import { EstimateHistory } from "./pages/EstimateHistory"
 import { Notifications } from "./pages/Notifications"
 import { Profile } from "./pages/Profile"
 import { New } from "./pages/New"
+import { Community } from "./pages/Community"
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
               <Route path="/notificaciones" element={<Notifications />} />
               <Route path="/perfil" element={<Profile />} />
               <Route path="/nuevo" element={<New />} />
+              <Route path="/comunidad" element={<Community />} />
             </Route>
           </Route>
         </Routes>

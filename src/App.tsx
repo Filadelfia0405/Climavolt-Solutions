@@ -17,6 +17,7 @@ import { InvoiceHistory } from "./pages/InvoiceHistory"
 import { Estimates } from "./pages/Estimates"
 import { EstimateHistory } from "./pages/EstimateHistory"
 import { Notifications } from "./pages/Notifications"
+import { Profile } from "./pages/Profile"
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
               <Route path="/presupuestos/:id" element={<Estimates />} />
               <Route path="/estimate-history" element={<EstimateHistory />} />
               <Route path="/notificaciones" element={<Notifications />} />
+              <Route path="/perfil" element={<Profile />} />
             </Route>
           </Route>
         </Routes>

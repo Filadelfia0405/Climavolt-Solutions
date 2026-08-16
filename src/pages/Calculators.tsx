@@ -14,6 +14,8 @@ export function Calculators() {
   // Conversion State
   const [btu, setBtu] = useState<string>("12000")
   const [psi, setPsi] = useState<string>("")
+  const [celsius, setCelsius] = useState<string>("")
+  const [fahrenheit, setFahrenheit] = useState<string>("")
 
   // Thermal Load State
   const [largo, setLargo] = useState<string>("")
@@ -40,6 +42,12 @@ export function Calculators() {
 
   const psiNum = parseFloat(psi) || 0
   const bar = psi ? (psiNum * 0.0689476).toFixed(2) : ""
+  
+  const cNum = parseFloat(celsius) || 0
+  const fResult = celsius ? ((cNum * 9/5) + 32).toFixed(1) : ""
+  
+  const fNum = parseFloat(fahrenheit) || 0
+  const cResult = fahrenheit ? ((fNum - 32) * 5/9).toFixed(1) : ""
 
   const calculateThermalLoad = () => {
     const l = parseFloat(largo) || 0;
@@ -187,6 +195,46 @@ export function Calculators() {
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">Bar</label>
                     <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value={bar} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-slate-900/80">
+              <CardContent className="p-4 space-y-4">
+                <h2 className="text-sm font-semibold text-slate-300">Temperatura</h2>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400">Celsius (°C)</label>
+                    <Input 
+                      type="number" 
+                      placeholder="0" 
+                      className="h-10 text-right" 
+                      value={celsius}
+                      onChange={(e) => setCelsius(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400">Fahrenheit (°F)</label>
+                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value={fResult} />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 mt-2 border-t border-slate-800 pt-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400">Fahrenheit (°F)</label>
+                    <Input 
+                      type="number" 
+                      placeholder="0" 
+                      className="h-10 text-right" 
+                      value={fahrenheit}
+                      onChange={(e) => setFahrenheit(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400">Celsius (°C)</label>
+                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value={cResult} />
                   </div>
                 </div>
               </CardContent>

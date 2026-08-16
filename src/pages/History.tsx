@@ -145,6 +145,8 @@ export function History() {
     }
   }
   
+  const [showClientDropdown, setShowClientDropdown] = useState(false)
+
   const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
     const foundClient = clientsData.find(c => c.name === name);
@@ -212,22 +214,43 @@ export function History() {
                     placeholder="Ej. Lennox 12K BTU"
                   />
                 </div>
-                <div>
+                <div className="relative">
                   <label className="text-xs font-medium text-slate-400 mb-1 block">Nombre del Cliente *</label>
                   <input
                     type="text"
                     required
-                    list="clients-list"
                     value={formData.customer_name}
                     onChange={handleCustomerChange}
+                    onFocus={() => setShowClientDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowClientDropdown(false), 200)}
                     className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
                     placeholder="Ej. Juan Pérez"
                   />
-                  <datalist id="clients-list">
-                    {clientsData.map((client, idx) => (
-                      <option key={idx} value={client.name} />
-                    ))}
-                  </datalist>
+                  {showClientDropdown && (
+                    <ul className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                      {clientsData
+                        .filter(c => c.name.toLowerCase().includes(formData.customer_name.toLowerCase()))
+                        .map((client, idx) => (
+                        <li 
+                          key={idx}
+                          className="p-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-white cursor-pointer transition-colors"
+                          onClick={() => {
+                            setFormData(prev => ({ 
+                              ...prev, 
+                              customer_name: client.name,
+                              address: client.address || prev.address
+                            }))
+                            setShowClientDropdown(false)
+                          }}
+                        >
+                          {client.name}
+                        </li>
+                      ))}
+                      {clientsData.filter(c => c.name.toLowerCase().includes(formData.customer_name.toLowerCase())).length === 0 && (
+                         <li className="p-3 text-sm text-slate-500 text-center">No se encontraron clientes</li>
+                      )}
+                    </ul>
+                  )}
                 </div>
                 <div>
                   <label className="text-xs font-medium text-slate-400 mb-1 block">Dirección</label>

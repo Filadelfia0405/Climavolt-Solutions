@@ -11,6 +11,59 @@ export function Calculators() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<"conversion" | "carga">("conversion")
 
+  // Conversion State
+  const [btu, setBtu] = useState<string>("12000")
+  const [psi, setPsi] = useState<string>("")
+
+  // Thermal Load State
+  const [largo, setLargo] = useState<string>("")
+  const [ancho, setAncho] = useState<string>("")
+  const [personas, setPersonas] = useState<string>("")
+  const [equipos, setEquipos] = useState<string>("")
+  const [thermalResult, setThermalResult] = useState<number | null>(null)
+
+  // Derived Conversions
+  const btuNum = parseFloat(btu) || 0
+  const tons = (btuNum / 12000).toFixed(2)
+  const kw = (btuNum / 3412.14).toFixed(2)
+  const frigs = (btuNum * 0.252).toFixed(0)
+
+  const psiNum = parseFloat(psi) || 0
+  const bar = psi ? (psiNum * 0.0689476).toFixed(2) : ""
+
+  const calculateThermalLoad = () => {
+    const l = parseFloat(largo) || 0;
+    const w = parseFloat(ancho) || 0;
+    const p = parseInt(personas) || 0;
+    const e = parseInt(equipos) || 0;
+
+    if (l <= 0 || w <= 0) {
+      setThermalResult(null);
+      return;
+    }
+
+    const area = l * w;
+    const areaBtu = area * 800; // 800 BTU/m2 para clima tropical (Rep. Dom.)
+    const personasBtu = p * 400; // 400 BTU por persona
+    const equiposBtu = e * 600; // 600 BTU por equipo que genera calor
+
+    const totalBtu = areaBtu + personasBtu + equiposBtu;
+    
+    // Tamaños comerciales comunes en BTU
+    const sizes = [9000, 12000, 18000, 24000, 36000, 48000, 60000];
+    let recommended = sizes[sizes.length - 1];
+    
+    for (const size of sizes) {
+      if (totalBtu <= size) {
+        recommended = size;
+        break;
+      }
+    }
+    
+    // Si excede 60000, recomendar el cálculo exacto redondeado hacia arriba
+    setThermalResult(totalBtu > 60000 ? Math.ceil(totalBtu / 1000) * 1000 : recommended);
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 p-4 pb-24">
       {/* Header */}
@@ -61,22 +114,28 @@ export function Calculators() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">BTU/h</label>
-                    <Input type="number" placeholder="0" className="h-10 text-right" defaultValue="12000" />
+                    <Input 
+                      type="number" 
+                      placeholder="0" 
+                      className="h-10 text-right" 
+                      value={btu} 
+                      onChange={(e) => setBtu(e.target.value)} 
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">Toneladas (TR)</label>
-                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value="1" />
+                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value={btu ? tons : ""} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">Kilovatios (kW)</label>
-                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value="3.51" />
+                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value={btu ? kw : ""} />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">Frigorías</label>
-                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value="3024" />
+                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value={btu ? frigs : ""} />
                   </div>
                 </div>
               </CardContent>
@@ -89,11 +148,17 @@ export function Calculators() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">PSI</label>
-                    <Input type="number" placeholder="0" className="h-10 text-right" />
+                    <Input 
+                      type="number" 
+                      placeholder="0" 
+                      className="h-10 text-right" 
+                      value={psi}
+                      onChange={(e) => setPsi(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">Bar</label>
-                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly />
+                    <Input type="number" placeholder="0" className="h-10 text-right bg-slate-800" readOnly value={bar} />
                   </div>
                 </div>
               </CardContent>
@@ -103,38 +168,40 @@ export function Calculators() {
           <div className="flex flex-col gap-4">
             <Card className="bg-slate-900/80 border-blue-900/30">
               <CardContent className="p-4 space-y-4">
-                <p className="text-xs text-slate-400">Calcula la capacidad recomendada para un espacio cerrado estándar.</p>
+                <p className="text-xs text-slate-400">Calcula la capacidad recomendada para un espacio cerrado estándar en clima tropical.</p>
                 
                 <div className="space-y-1.5">
                   <label className="text-xs text-slate-400">Largo (metros)</label>
-                  <Input type="number" placeholder="Ej. 4" className="h-10" />
+                  <Input type="number" placeholder="Ej. 4" className="h-10" value={largo} onChange={(e) => setLargo(e.target.value)} />
                 </div>
                 
                 <div className="space-y-1.5">
                   <label className="text-xs text-slate-400">Ancho (metros)</label>
-                  <Input type="number" placeholder="Ej. 3" className="h-10" />
+                  <Input type="number" placeholder="Ej. 3" className="h-10" value={ancho} onChange={(e) => setAncho(e.target.value)} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">Personas aprox.</label>
-                    <Input type="number" placeholder="Ej. 2" className="h-10" />
+                    <Input type="number" placeholder="Ej. 2" className="h-10" value={personas} onChange={(e) => setPersonas(e.target.value)} />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs text-slate-400">Equipos que generan calor</label>
-                    <Input type="number" placeholder="Ej. 1" className="h-10" />
+                    <Input type="number" placeholder="Ej. 1" className="h-10" value={equipos} onChange={(e) => setEquipos(e.target.value)} />
                   </div>
                 </div>
 
-                <Button className="w-full mt-2">Calcular Capacidad</Button>
+                <Button className="w-full mt-2" onClick={calculateThermalLoad}>Calcular Capacidad</Button>
               </CardContent>
             </Card>
 
-            {/* Simulated Result */}
-            <div className="mt-2 text-center">
-               <p className="text-sm text-slate-400 mb-1">Capacidad recomendada</p>
-               <h3 className="text-3xl font-bold text-blue-500">9,000 <span className="text-lg text-slate-300">BTU/h</span></h3>
-            </div>
+            {/* Result */}
+            {thermalResult !== null && (
+              <div className="mt-2 text-center">
+                 <p className="text-sm text-slate-400 mb-1">Capacidad recomendada</p>
+                 <h3 className="text-3xl font-bold text-blue-500">{thermalResult.toLocaleString()} <span className="text-lg text-slate-300">BTU/h</span></h3>
+              </div>
+            )}
           </div>
         )}
       </motion.div>

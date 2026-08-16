@@ -43,7 +43,7 @@ export function Dashboard() {
             <img 
               src={logoBase64} 
               alt="ClimaVolt" 
-              className="h-10 w-auto object-contain brightness-0 invert"
+              className="h-16 w-auto object-contain brightness-0 invert"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}

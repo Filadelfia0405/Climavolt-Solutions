@@ -43,7 +43,7 @@ export function Dashboard() {
             <img 
               src={logoBase64} 
               alt="ClimaVolt" 
-              className="h-16 w-auto object-contain brightness-0 invert"
+              className="h-16 w-auto object-contain mix-blend-screen invert grayscale contrast-200"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}

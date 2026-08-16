@@ -18,6 +18,10 @@ export function Calculators() {
   // Thermal Load State
   const [largo, setLargo] = useState<string>("")
   const [ancho, setAncho] = useState<string>("")
+  const [altura, setAltura] = useState<string>("")
+  const [ventanas, setVentanas] = useState<string>("")
+  const [ventanaAncho, setVentanaAncho] = useState<string>("")
+  const [ventanaAlto, setVentanaAlto] = useState<string>("")
   const [personas, setPersonas] = useState<string>("")
   const [equipos, setEquipos] = useState<string>("")
   const [thermalResult, setThermalResult] = useState<number | null>(null)
@@ -34,20 +38,30 @@ export function Calculators() {
   const calculateThermalLoad = () => {
     const l = parseFloat(largo) || 0;
     const w = parseFloat(ancho) || 0;
+    const h = parseFloat(altura) || 0;
+    const vCount = parseInt(ventanas) || 0;
+    const vW = parseFloat(ventanaAncho) || 0;
+    const vH = parseFloat(ventanaAlto) || 0;
     const p = parseInt(personas) || 0;
     const e = parseInt(equipos) || 0;
 
-    if (l <= 0 || w <= 0) {
+    if (l <= 0 || w <= 0 || h <= 0) {
       setThermalResult(null);
       return;
     }
 
-    const area = l * w;
-    const areaBtu = area * 800; // 800 BTU/m2 para clima tropical (Rep. Dom.)
+    // Volumen en pies cúbicos
+    const volume = l * w * h;
+    const volumeBtu = volume * 5; // 5 BTU por pie cúbico para clima cálido
+
+    // Área de ventanas en pies cuadrados
+    const windowsArea = vW * vH * vCount;
+    const windowsBtu = windowsArea * 80; // 80 BTU por pie cuadrado de ventana
+
     const personasBtu = p * 400; // 400 BTU por persona
     const equiposBtu = e * 600; // 600 BTU por equipo que genera calor
 
-    const totalBtu = areaBtu + personasBtu + equiposBtu;
+    const totalBtu = volumeBtu + windowsBtu + personasBtu + equiposBtu;
     
     // Tamaños comerciales comunes en BTU
     const sizes = [9000, 12000, 18000, 24000, 36000, 48000, 60000];
@@ -168,37 +182,63 @@ export function Calculators() {
           <div className="flex flex-col gap-4">
             <Card className="bg-slate-900/80 border-blue-900/30">
               <CardContent className="p-4 space-y-4">
-                <p className="text-xs text-slate-400">Calcula la capacidad recomendada para un espacio cerrado estándar en clima tropical.</p>
+                <p className="text-xs text-slate-400">Calcula la capacidad recomendada basada en medidas y factores térmicos.</p>
                 
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400">Largo (metros)</label>
-                  <Input type="number" placeholder="Ej. 4" className="h-10" value={largo} onChange={(e) => setLargo(e.target.value)} />
-                </div>
-                
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400">Ancho (metros)</label>
-                  <Input type="number" placeholder="Ej. 3" className="h-10" value={ancho} onChange={(e) => setAncho(e.target.value)} />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-2">
                   <div className="space-y-1.5">
-                    <label className="text-xs text-slate-400">Personas aprox.</label>
-                    <Input type="number" placeholder="Ej. 2" className="h-10" value={personas} onChange={(e) => setPersonas(e.target.value)} />
+                    <label className="text-xs text-slate-400">Largo (pies)</label>
+                    <Input type="number" placeholder="Ej. 12" className="h-10" value={largo} onChange={(e) => setLargo(e.target.value)} />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs text-slate-400">Equipos que generan calor</label>
-                    <Input type="number" placeholder="Ej. 1" className="h-10" value={equipos} onChange={(e) => setEquipos(e.target.value)} />
+                    <label className="text-xs text-slate-400">Ancho (pies)</label>
+                    <Input type="number" placeholder="Ej. 10" className="h-10" value={ancho} onChange={(e) => setAncho(e.target.value)} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400">Altura (pies)</label>
+                    <Input type="number" placeholder="Ej. 9" className="h-10" value={altura} onChange={(e) => setAltura(e.target.value)} />
                   </div>
                 </div>
 
-                <Button className="w-full mt-2" onClick={calculateThermalLoad}>Calcular Capacidad</Button>
+                <div className="pt-2 border-t border-slate-800">
+                  <p className="text-xs font-semibold text-slate-300 mb-2">Ventanas (opcional)</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">Cantidad</label>
+                      <Input type="number" placeholder="Ej. 2" className="h-10" value={ventanas} onChange={(e) => setVentanas(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">Ancho (pies)</label>
+                      <Input type="number" placeholder="Ej. 3" className="h-10" value={ventanaAncho} onChange={(e) => setVentanaAncho(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">Alto (pies)</label>
+                      <Input type="number" placeholder="Ej. 4" className="h-10" value={ventanaAlto} onChange={(e) => setVentanaAlto(e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800">
+                  <p className="text-xs font-semibold text-slate-300 mb-2">Fuentes de calor adicionales</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">Personas aprox.</label>
+                      <Input type="number" placeholder="Ej. 2" className="h-10" value={personas} onChange={(e) => setPersonas(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">Equipos de calor</label>
+                      <Input type="number" placeholder="Ej. 1" className="h-10" value={equipos} onChange={(e) => setEquipos(e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+
+                <Button className="w-full mt-4" onClick={calculateThermalLoad}>Calcular Capacidad</Button>
               </CardContent>
             </Card>
 
             {/* Result */}
             {thermalResult !== null && (
-              <div className="mt-2 text-center">
-                 <p className="text-sm text-slate-400 mb-1">Capacidad recomendada</p>
+              <div className="mt-2 mb-8 text-center bg-blue-900/20 border border-blue-900/50 rounded-xl p-4">
+                 <p className="text-sm text-blue-200 mb-1">Capacidad recomendada</p>
                  <h3 className="text-3xl font-bold text-blue-500">{thermalResult.toLocaleString()} <span className="text-lg text-slate-300">BTU/h</span></h3>
               </div>
             )}

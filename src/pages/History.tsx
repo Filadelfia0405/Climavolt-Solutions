@@ -28,6 +28,8 @@ export function History() {
   
   const [showForm, setShowForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [clientsData, setClientsData] = useState<{name: string, address: string}[]>([])
+  
   const [formData, setFormData] = useState({
     model: "",
     customer_name: "",
@@ -39,7 +41,24 @@ export function History() {
 
   useEffect(() => {
     fetchHistory()
+    fetchClients()
   }, [user])
+
+  async function fetchClients() {
+    if (!user) return
+    try {
+      const { data } = await supabase
+        .from("clients")
+        .select("name, address")
+        .eq("technician_id", user.id)
+      
+      if (data) {
+        setClientsData(data)
+      }
+    } catch (error) {
+      console.error("Error fetching clients:", error)
+    }
+  }
 
   async function fetchHistory() {
     if (!user) return
@@ -125,6 +144,21 @@ export function History() {
       setIsSubmitting(false)
     }
   }
+  
+  const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value;
+    const foundClient = clientsData.find(c => c.name === name);
+    
+    if (foundClient) {
+      setFormData(prev => ({ 
+        ...prev, 
+        customer_name: name,
+        address: foundClient.address || prev.address
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, customer_name: name }));
+    }
+  }
 
   const filteredHistory = historyData.filter((item) => {
     const term = searchTerm.toLowerCase()
@@ -183,11 +217,17 @@ export function History() {
                   <input
                     type="text"
                     required
+                    list="clients-list"
                     value={formData.customer_name}
-                    onChange={(e) => setFormData({...formData, customer_name: e.target.value})}
+                    onChange={handleCustomerChange}
                     className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
                     placeholder="Ej. Juan Pérez"
                   />
+                  <datalist id="clients-list">
+                    {clientsData.map((client, idx) => (
+                      <option key={idx} value={client.name} />
+                    ))}
+                  </datalist>
                 </div>
                 <div>
                   <label className="text-xs font-medium text-slate-400 mb-1 block">Dirección</label>

@@ -39,7 +39,7 @@ export function Dashboard() {
       {/* Header */}
       <header className="flex items-center justify-between pt-2">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center bg-white rounded-2xl px-4 py-3 shadow-lg shadow-white/5">
+          <div className="flex items-center justify-center py-1">
             <img 
               src={logoBase64} 
               alt="ClimaVolt" 

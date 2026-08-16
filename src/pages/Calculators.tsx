@@ -24,6 +24,12 @@ export function Calculators() {
   const [ventanaAlto, setVentanaAlto] = useState<string>("")
   const [personas, setPersonas] = useState<string>("")
   const [equipos, setEquipos] = useState<string>("")
+  
+  // Iluminación
+  const [bombillosLed, setBombillosLed] = useState<string>("")
+  const [bombillosFluorescentes, setBombillosFluorescentes] = useState<string>("")
+  const [bombillosIncandescentes, setBombillosIncandescentes] = useState<string>("")
+
   const [thermalResult, setThermalResult] = useState<number | null>(null)
 
   // Derived Conversions
@@ -44,6 +50,10 @@ export function Calculators() {
     const vH = parseFloat(ventanaAlto) || 0;
     const p = parseInt(personas) || 0;
     const e = parseInt(equipos) || 0;
+    
+    const led = parseInt(bombillosLed) || 0;
+    const fluor = parseInt(bombillosFluorescentes) || 0;
+    const incan = parseInt(bombillosIncandescentes) || 0;
 
     if (l <= 0 || w <= 0 || h <= 0) {
       setThermalResult(null);
@@ -60,8 +70,12 @@ export function Calculators() {
 
     const personasBtu = p * 400; // 400 BTU por persona
     const equiposBtu = e * 600; // 600 BTU por equipo que genera calor
+    
+    const ledBtu = led * 34; // ~10W * 3.4
+    const fluorBtu = fluor * 68; // ~20W * 3.4
+    const incanBtu = incan * 200; // ~60W * 3.4
 
-    const totalBtu = volumeBtu + windowsBtu + personasBtu + equiposBtu;
+    const totalBtu = volumeBtu + windowsBtu + personasBtu + equiposBtu + ledBtu + fluorBtu + incanBtu;
     
     // Tamaños comerciales comunes en BTU
     const sizes = [9000, 12000, 18000, 24000, 36000, 48000, 60000];
@@ -213,6 +227,24 @@ export function Calculators() {
                     <div className="space-y-1.5">
                       <label className="text-xs text-slate-400">Alto (pies)</label>
                       <Input type="number" placeholder="Ej. 4" className="h-10" value={ventanaAlto} onChange={(e) => setVentanaAlto(e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800">
+                  <p className="text-xs font-semibold text-slate-300 mb-2">Iluminación</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">LED</label>
+                      <Input type="number" placeholder="Cant." className="h-10" value={bombillosLed} onChange={(e) => setBombillosLed(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">Fluorescentes</label>
+                      <Input type="number" placeholder="Cant." className="h-10" value={bombillosFluorescentes} onChange={(e) => setBombillosFluorescentes(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-slate-400">Incandescentes</label>
+                      <Input type="number" placeholder="Cant." className="h-10" value={bombillosIncandescentes} onChange={(e) => setBombillosIncandescentes(e.target.value)} />
                     </div>
                   </div>
                 </div>

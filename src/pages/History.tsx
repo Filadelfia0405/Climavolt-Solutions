@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react"
-import { ArrowLeft, Search, Calendar, MapPin, User, Plus, Loader2 } from "lucide-react"
+import { ArrowLeft, Search, Calendar, MapPin, User, Plus, Loader2, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { Card } from "../components/ui/card"
+import { Card, CardContent } from "../components/ui/card"
+import { Button } from "../components/ui/button"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../contexts/AuthContext"
+import { motion } from "framer-motion"
 
 interface HistoryRecord {
   id: string
@@ -23,39 +25,106 @@ export function History() {
   const [searchTerm, setSearchTerm] = useState("")
   const [historyData, setHistoryData] = useState<HistoryRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  
+  const [showForm, setShowForm] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    model: "",
+    customer_name: "",
+    address: "",
+    maintenance_type: "Mantenimiento Preventivo",
+    status: "Completado",
+    date: new Date().toISOString().split('T')[0]
+  })
 
   useEffect(() => {
-    async function fetchHistory() {
-      if (!user) return
-
-      try {
-        const { data, error } = await supabase
-          .from("history")
-          .select(`
-            id,
-            maintenance_type,
-            status,
-            date,
-            equipments (
-              customer_name,
-              address,
-              model
-            )
-          `)
-          .eq("technician_id", user.id)
-          .order("date", { ascending: false })
-        
-        if (error) throw error
-        setHistoryData(data as unknown as HistoryRecord[] || [])
-      } catch (error) {
-        console.error("Error fetching history:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     fetchHistory()
   }, [user])
+
+  async function fetchHistory() {
+    if (!user) return
+    setIsLoading(true)
+
+    try {
+      const { data, error } = await supabase
+        .from("history")
+        .select(`
+          id,
+          maintenance_type,
+          status,
+          date,
+          equipments (
+            customer_name,
+            address,
+            model
+          )
+        `)
+        .eq("technician_id", user.id)
+        .order("date", { ascending: false })
+      
+      if (error) throw error
+      setHistoryData(data as unknown as HistoryRecord[] || [])
+    } catch (error) {
+      console.error("Error fetching history:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) return
+    setIsSubmitting(true)
+
+    try {
+      // 1. Insert into equipments first
+      const { data: equipData, error: equipError } = await supabase
+        .from("equipments")
+        .insert([{
+          technician_id: user.id,
+          model: formData.model,
+          customer_name: formData.customer_name,
+          address: formData.address
+        }])
+        .select()
+
+      if (equipError) throw equipError
+      
+      const equipmentId = equipData?.[0]?.id
+      if (!equipmentId) throw new Error("No se pudo crear el equipo")
+
+      // 2. Insert into history
+      const { error: historyError } = await supabase
+        .from("history")
+        .insert([{
+          technician_id: user.id,
+          equipment_id: equipmentId,
+          maintenance_type: formData.maintenance_type,
+          status: formData.status,
+          date: formData.date
+        }])
+
+      if (historyError) throw historyError
+
+      // Refrescar lista
+      fetchHistory()
+      setShowForm(false)
+      setFormData({
+        model: "",
+        customer_name: "",
+        address: "",
+        maintenance_type: "Mantenimiento Preventivo",
+        status: "Completado",
+        date: new Date().toISOString().split('T')[0]
+      })
+
+    } catch (error) {
+      console.error("Error saving history:", error)
+      alert("Hubo un error al guardar el registro. Es posible que las tablas no existan o falten permisos.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const filteredHistory = historyData.filter((item) => {
     const term = searchTerm.toLowerCase()
@@ -77,11 +146,112 @@ export function History() {
           </button>
           <h1 className="text-lg font-semibold text-white">Historial de Equipos</h1>
         </div>
-        <button className="flex h-8 items-center gap-1 rounded-lg bg-blue-600 px-3 text-xs font-medium text-white hover:bg-blue-700">
-          <Plus size={14} />
-          Nuevo
+        <button 
+          onClick={() => setShowForm(!showForm)}
+          className="flex h-8 items-center gap-1 rounded-lg bg-blue-600 px-3 text-xs font-medium text-white hover:bg-blue-700"
+        >
+          {showForm ? <X size={14} /> : <Plus size={14} />}
+          {showForm ? "Cerrar" : "Nuevo"}
         </button>
       </header>
+      
+      {/* Formulario */}
+      {showForm && (
+        <motion.div
+          initial={{ opacity: 0, height: 0, marginTop: 0 }}
+          animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+          exit={{ opacity: 0, height: 0, marginTop: 0 }}
+          className="overflow-hidden"
+        >
+          <Card className="border-blue-900/50 bg-[#0f192d]">
+            <CardContent className="p-4">
+              <h3 className="text-lg font-semibold text-white mb-4">Nuevo Registro</h3>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <div>
+                  <label className="text-xs font-medium text-slate-400 mb-1 block">Modelo del Equipo *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.model}
+                    onChange={(e) => setFormData({...formData, model: e.target.value})}
+                    className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+                    placeholder="Ej. Lennox 12K BTU"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-400 mb-1 block">Nombre del Cliente *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.customer_name}
+                    onChange={(e) => setFormData({...formData, customer_name: e.target.value})}
+                    className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+                    placeholder="Ej. Juan Pérez"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-400 mb-1 block">Dirección</label>
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => setFormData({...formData, address: e.target.value})}
+                    className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+                    placeholder="Ej. Av. Winston Churchill #123"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-slate-400 mb-1 block">Tipo de Trabajo</label>
+                    <select
+                      value={formData.maintenance_type}
+                      onChange={(e) => setFormData({...formData, maintenance_type: e.target.value})}
+                      className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white focus:border-blue-500 focus:outline-none"
+                    >
+                      <option>Mantenimiento Preventivo</option>
+                      <option>Mantenimiento Correctivo</option>
+                      <option>Instalación</option>
+                      <option>Revisión Técnica</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-slate-400 mb-1 block">Estado</label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData({...formData, status: e.target.value})}
+                      className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white focus:border-blue-500 focus:outline-none"
+                    >
+                      <option>Completado</option>
+                      <option>Pendiente</option>
+                      <option>En Progreso</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-slate-400 mb-1 block">Fecha</label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.date}
+                    onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    className="w-full rounded-xl bg-slate-900/50 border border-slate-700 p-3 text-sm text-white focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex gap-3 mt-2">
+                  <Button type="button" onClick={() => setShowForm(false)} className="flex-1 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white">
+                    Cancelar
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting} className="flex-1 bg-blue-600 hover:bg-blue-700">
+                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Guardar"}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Search Bar */}
       <div className="mt-4 relative">

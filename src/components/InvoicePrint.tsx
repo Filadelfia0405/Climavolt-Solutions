@@ -1,5 +1,6 @@
 import React from 'react';
 import { logoBase64 } from '../assets/logoBase64';
+import { useSettings } from '../contexts/SettingsContext';
 
 interface InvoicePrintProps {
   formData: any;
@@ -11,6 +12,8 @@ interface InvoicePrintProps {
 }
 
 export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, subtotal, tax, total, documentType = "FACTURA" }) => {
+  const { logoUrl } = useSettings();
+
   return (
     <div 
       id="printable-invoice" 
@@ -21,7 +24,7 @@ export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, sub
       <div className="flex justify-between items-start border-b-2 border-blue-600 pb-6 mb-6">
         <div className="flex flex-col">
           <div className="flex items-center gap-2 mb-2 -mt-6">
-            <img src={logoBase64} alt="ClimaVolt Solutions" className="w-80 h-auto object-contain" onError={(e) => {
+            <img src={logoUrl || logoBase64} alt="ClimaVolt Solutions" className="w-80 h-auto object-contain" onError={(e) => {
               e.currentTarget.style.display = 'none';
             }} />
           </div>

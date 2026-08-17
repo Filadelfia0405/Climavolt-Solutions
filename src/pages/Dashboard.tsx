@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button"
 import { useNotifications } from "../hooks/useNotifications"
 import { logoBase64 } from "../assets/logoBase64"
 import { useAuth } from "../contexts/AuthContext"
+import { useSettings } from "../contexts/SettingsContext"
 import { supabase } from "../lib/supabase"
 
 const QUICK_TOOLS = [
@@ -29,6 +30,7 @@ export function Dashboard() {
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
   const { user } = useAuth()
+  const { logoUrl } = useSettings()
   const [recentAccess, setRecentAccess] = useState<RecentAccessItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -80,9 +82,9 @@ export function Dashboard() {
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center py-1">
             <img 
-              src={logoBase64} 
+              src={logoUrl || logoBase64} 
               alt="ClimaVolt" 
-              className="h-16 w-auto object-contain mix-blend-screen invert grayscale contrast-200"
+              className={`h-16 w-auto object-contain ${!logoUrl ? 'mix-blend-screen invert grayscale contrast-200' : ''}`}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}

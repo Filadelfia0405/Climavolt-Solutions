@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
+import { SettingsProvider } from "./contexts/SettingsContext"
 import { ProtectedRoute } from "./components/layout/ProtectedRoute"
 import { Layout } from "./components/layout/Layout"
 import { Login } from "./pages/Login"
@@ -24,34 +25,36 @@ import { Community } from "./pages/Community"
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          
-          <Route element={<ProtectedRoute />}>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/diagnostico" element={<DiagnosticInput />} />
-              <Route path="/diagnostico/resultado" element={<DiagnosticResult />} />
-              <Route path="/calculators" element={<Calculators />} />
-              <Route path="/error-codes" element={<ErrorCodes />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/tools" element={<Tools />} />
-              <Route path="/billing" element={<Billing />} />
-              <Route path="/billing/:id" element={<Billing />} />
-              <Route path="/invoice-history" element={<InvoiceHistory />} />
-              <Route path="/presupuestos" element={<Estimates />} />
-              <Route path="/presupuestos/:id" element={<Estimates />} />
-              <Route path="/estimate-history" element={<EstimateHistory />} />
-              <Route path="/notificaciones" element={<Notifications />} />
-              <Route path="/perfil" element={<Profile />} />
-              <Route path="/nuevo" element={<New />} />
-              <Route path="/comunidad" element={<Community />} />
+      <SettingsProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/diagnostico" element={<DiagnosticInput />} />
+                <Route path="/diagnostico/resultado" element={<DiagnosticResult />} />
+                <Route path="/calculators" element={<Calculators />} />
+                <Route path="/error-codes" element={<ErrorCodes />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/clients" element={<Clients />} />
+                <Route path="/tools" element={<Tools />} />
+                <Route path="/billing" element={<Billing />} />
+                <Route path="/billing/:id" element={<Billing />} />
+                <Route path="/invoice-history" element={<InvoiceHistory />} />
+                <Route path="/presupuestos" element={<Estimates />} />
+                <Route path="/presupuestos/:id" element={<Estimates />} />
+                <Route path="/estimate-history" element={<EstimateHistory />} />
+                <Route path="/notificaciones" element={<Notifications />} />
+                <Route path="/perfil" element={<Profile />} />
+                <Route path="/nuevo" element={<New />} />
+                <Route path="/comunidad" element={<Community />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </SettingsProvider>
     </AuthProvider>
   )
 }

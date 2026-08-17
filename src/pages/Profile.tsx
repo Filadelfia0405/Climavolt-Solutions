@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
-import { ArrowLeft, User, LogOut, Mail, Settings, Shield } from "lucide-react"
+import { useSettings } from "../contexts/SettingsContext"
+import { ArrowLeft, User, LogOut, Mail, Settings, Shield, Image as ImageIcon, Globe } from "lucide-react"
 import { Card, CardContent } from "../components/ui/card"
 import { motion } from "framer-motion"
+import { useRef } from "react"
 
 export function Profile() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const { language, setLanguage, setLogoUrl, t } = useSettings()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleLogout = async () => {
     try {
@@ -17,6 +21,18 @@ export function Profile() {
     }
   }
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64String = reader.result as string
+      setLogoUrl(base64String)
+    }
+    reader.readAsDataURL(file)
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 p-4 pb-24">
       {/* Header */}
@@ -25,7 +41,7 @@ export function Profile() {
           <button onClick={() => navigate(-1)} className="p-2 text-slate-300 hover:text-white -ml-2">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold text-white">Mi Perfil</h1>
+          <h1 className="text-lg font-semibold text-white">{t('my_profile')}</h1>
         </div>
       </header>
 
@@ -50,12 +66,59 @@ export function Profile() {
             </div>
 
             <div className="p-4 flex flex-col gap-2">
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-2">{t('customization')}</h3>
+              
+              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-900 border border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
+                    <ImageIcon size={18} />
+                  </div>
+                  <span className="font-medium text-sm text-slate-300">{t('upload_logo')}</span>
+                </div>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  ref={fileInputRef} 
+                  onChange={handleImageUpload} 
+                />
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg transition-colors"
+                >
+                  Subir
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-900 border border-slate-800 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
+                    <Globe size={18} />
+                  </div>
+                  <span className="font-medium text-sm text-slate-300">{t('language')}</span>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setLanguage('es')}
+                    className={`px-3 py-1 text-xs rounded-lg transition-colors ${language === 'es' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                  >
+                    ES
+                  </button>
+                  <button 
+                    onClick={() => setLanguage('en')}
+                    className={`px-3 py-1 text-xs rounded-lg transition-colors ${language === 'en' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                  >
+                    EN
+                  </button>
+                </div>
+              </div>
+
               <button className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-800 transition-colors text-slate-300">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-slate-800 rounded-lg text-slate-400">
                     <Settings size={18} />
                   </div>
-                  <span className="font-medium text-sm">Configuración de la cuenta</span>
+                  <span className="font-medium text-sm">{t('settings')}</span>
                 </div>
               </button>
               
@@ -67,7 +130,7 @@ export function Profile() {
                   <div className="p-2 bg-red-500/10 rounded-lg text-red-400">
                     <LogOut size={18} />
                   </div>
-                  <span className="font-medium text-sm">Cerrar Sesión</span>
+                  <span className="font-medium text-sm">{t('logout')}</span>
                 </div>
               </button>
             </div>

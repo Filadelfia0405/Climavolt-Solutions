@@ -1,17 +1,19 @@
 import { Home, Wrench, PlusCircle, Users, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "../../lib/utils";
-
-const NAV_ITEMS = [
-  { icon: Home, label: "Inicio", path: "/" },
-  { icon: Wrench, label: "Equipos", path: "/history" },
-  { icon: PlusCircle, label: "Nuevo", path: "/nuevo", isPrimary: true },
-  { icon: Users, label: "Comunidad", path: "/comunidad" },
-  { icon: User, label: "Perfil", path: "/perfil" },
-];
+import { useSettings } from "../../contexts/SettingsContext";
 
 export function BottomNavigation() {
   const location = useLocation();
+  const { t } = useSettings();
+
+  const NAV_ITEMS = [
+    { icon: Home, label: t("home"), path: "/" },
+    { icon: Wrench, label: t("equipment"), path: "/history" },
+    { icon: PlusCircle, label: t("new"), path: "/nuevo", isPrimary: true },
+    { icon: Users, label: t("community"), path: "/comunidad" },
+    { icon: User, label: t("profile"), path: "/perfil" },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-between border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md sm:hidden">

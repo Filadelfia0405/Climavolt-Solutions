@@ -5,12 +5,14 @@ import { ArrowLeft, User, LogOut, Mail, Settings, Shield, Image as ImageIcon, Gl
 import { Card, CardContent } from "../components/ui/card"
 import { motion } from "framer-motion"
 import { useRef, useState } from "react"
+import { supabase } from "../lib/supabase"
 
 export function Profile() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const { language, setLanguage, setLogoUrl, t } = useSettings()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
   const [showSettings, setShowSettings] = useState(false)
 
   const handleLogout = async () => {
@@ -34,6 +36,24 @@ export function Profile() {
     reader.readAsDataURL(file)
   }
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onloadend = async () => {
+      const base64String = reader.result as string
+      try {
+        await supabase.auth.updateUser({
+          data: { avatar_url: base64String }
+        })
+      } catch (error) {
+        console.error("Error updating avatar:", error)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 p-4 pb-24">
       {/* Header */}
@@ -53,11 +73,31 @@ export function Profile() {
         <Card className="border-slate-800 bg-slate-900/50 mb-6 overflow-hidden">
           <CardContent className="p-0">
             <div className="flex flex-col items-center justify-center p-8 border-b border-slate-800 bg-gradient-to-b from-blue-900/20 to-transparent">
-              <div className="h-24 w-24 rounded-full bg-slate-800 flex items-center justify-center border-4 border-slate-900 shadow-xl mb-4 relative">
-                <User size={40} className="text-slate-400" />
-                <div className="absolute bottom-0 right-0 w-6 h-6 bg-blue-500 border-2 border-slate-900 rounded-full flex items-center justify-center">
+              <div 
+                className="h-24 w-24 rounded-full bg-slate-800 flex items-center justify-center border-4 border-slate-900 shadow-xl mb-4 relative cursor-pointer group"
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                {user?.user_metadata?.avatar_url ? (
+                  <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                ) : (
+                  <User size={40} className="text-slate-400 group-hover:text-white transition-colors" />
+                )}
+                
+                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                   <ImageIcon size={20} className="text-white" />
+                </div>
+
+                <div className="absolute bottom-0 right-0 w-6 h-6 bg-blue-500 border-2 border-slate-900 rounded-full flex items-center justify-center z-10">
                   <Shield size={12} className="text-white" />
                 </div>
+                
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  ref={avatarInputRef} 
+                  onChange={handleAvatarUpload} 
+                />
               </div>
               <h2 className="text-xl font-bold text-white mb-1">Técnico</h2>
               <p className="text-slate-400 text-sm flex items-center gap-2">

@@ -110,10 +110,14 @@ export function Profile() {
                   <Shield size={16} className="text-blue-400" />
                 </div>
                 <p className="text-slate-300 text-xs mb-2">Todo ilimitado + IA y Soporte</p>
-                <div className="flex flex-col gap-1 mt-3">
+                <div className="flex flex-col gap-1.5 mt-3">
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                     <span>Historial de equipos ilimitado</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span>Registro de clientes ilimitado</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
@@ -121,7 +125,19 @@ export function Profile() {
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Generador de presupuestos PDF</span>
+                    <span>Generador de presupuestos y facturas en PDF</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span>Historial de presupuestos</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span>Gestión de facturas (Pagadas / Pendientes)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span>Acceso a códigos de error exclusivos</span>
                   </div>
                 </div>
               </div>

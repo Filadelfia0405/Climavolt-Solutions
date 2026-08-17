@@ -36,20 +36,56 @@ export function Profile() {
     reader.readAsDataURL(file)
   }
 
+  const [localAvatar, setLocalAvatar] = useState<string | null>(null)
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const reader = new FileReader()
-    reader.onloadend = async () => {
-      const base64String = reader.result as string
+    // Create an image to resize it
+    const img = new Image()
+    img.onload = async () => {
+      const canvas = document.createElement('canvas')
+      const MAX_WIDTH = 200
+      const MAX_HEIGHT = 200
+      let width = img.width
+      let height = img.height
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height = Math.round((height * MAX_WIDTH) / width)
+          width = MAX_WIDTH
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width = Math.round((width * MAX_HEIGHT) / height)
+          height = MAX_HEIGHT
+        }
+      }
+
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx?.drawImage(img, 0, 0, width, height)
+      
+      // Compress to JPEG with 0.7 quality to keep base64 small for Supabase metadata
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7)
+      
+      setLocalAvatar(compressedBase64) // Optimistic UI update
+
       try {
-        await supabase.auth.updateUser({
-          data: { avatar_url: base64String }
+        const { error } = await supabase.auth.updateUser({
+          data: { avatar_url: compressedBase64 }
         })
+        if (error) throw error
       } catch (error) {
         console.error("Error updating avatar:", error)
       }
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      img.src = reader.result as string
     }
     reader.readAsDataURL(file)
   }
@@ -77,8 +113,8 @@ export function Profile() {
                 className="h-24 w-24 rounded-full bg-slate-800 flex items-center justify-center border-4 border-slate-900 shadow-xl mb-4 relative cursor-pointer group"
                 onClick={() => avatarInputRef.current?.click()}
               >
-                {user?.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                {(localAvatar || user?.user_metadata?.avatar_url) ? (
+                  <img src={localAvatar || user?.user_metadata?.avatar_url} alt="Profile" className="w-full h-full rounded-full object-cover" />
                 ) : (
                   <User size={40} className="text-slate-400 group-hover:text-white transition-colors" />
                 )}

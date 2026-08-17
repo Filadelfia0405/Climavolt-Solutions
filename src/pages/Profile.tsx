@@ -66,6 +66,7 @@ export function Profile() {
               </p>
             </div>
 
+            <div className="p-4 flex flex-col gap-2">
               <button 
                 onClick={() => setShowSettings(!showSettings)}
                 className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-800 transition-colors text-slate-300"
@@ -83,7 +84,7 @@ export function Profile() {
                 <motion.div 
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
-                  className="flex flex-col gap-2 pl-4 pr-2 border-l-2 border-slate-800 ml-4 mb-2"
+                  className="flex flex-col gap-2 pl-4 pr-2 border-l-2 border-slate-800 ml-4 mb-2 overflow-hidden"
                 >
                   <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800/50">
                     <div className="flex items-center gap-3">
@@ -131,7 +132,7 @@ export function Profile() {
                   </div>
                 </motion.div>
               )}
-              
+
               <button 
                 onClick={handleLogout}
                 className="flex items-center justify-between p-4 rounded-xl hover:bg-red-500/10 transition-colors text-red-400"

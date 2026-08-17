@@ -11,12 +11,12 @@ import { useSettings } from "../contexts/SettingsContext"
 import { supabase } from "../lib/supabase"
 
 const QUICK_TOOLS = [
-  { icon: AlertTriangle, label: "Códigos de error", color: "bg-red-500/20 text-red-500", path: "/error-codes" },
-  { icon: Calculator, label: "Calculadoras", color: "bg-green-500/20 text-green-500", path: "/calculators" },
-  { icon: FileText, label: "Facturación", color: "bg-yellow-500/20 text-yellow-500", path: "/billing" },
-  { icon: Users, label: "Clientes", color: "bg-indigo-500/20 text-indigo-500", path: "/clients" },
-  { icon: DollarSign, label: "Presupuestos", color: "bg-orange-500/20 text-orange-500", path: "/presupuestos" },
-  { icon: ClipboardList, label: "Hist. Facturas", color: "bg-teal-500/20 text-teal-500", path: "/invoice-history" },
+  { icon: AlertTriangle, key: "error_codes", color: "bg-red-500/20 text-red-500", path: "/error-codes" },
+  { icon: Calculator, key: "calculators", color: "bg-green-500/20 text-green-500", path: "/calculators" },
+  { icon: FileText, key: "billing", color: "bg-yellow-500/20 text-yellow-500", path: "/billing" },
+  { icon: Users, key: "clients", color: "bg-indigo-500/20 text-indigo-500", path: "/clients" },
+  { icon: DollarSign, key: "estimates", color: "bg-orange-500/20 text-orange-500", path: "/presupuestos" },
+  { icon: ClipboardList, key: "invoice_history", color: "bg-teal-500/20 text-teal-500", path: "/invoice-history" },
 ]
 
 interface RecentAccessItem {
@@ -30,7 +30,7 @@ export function Dashboard() {
   const navigate = useNavigate()
   const { unreadCount } = useNotifications()
   const { user } = useAuth()
-  const { logoUrl } = useSettings()
+  const { logoUrl, t, language } = useSettings()
   const [recentAccess, setRecentAccess] = useState<RecentAccessItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -59,9 +59,9 @@ export function Dashboard() {
         if (data) {
           const formatted = data.map((item: any) => ({
             id: item.id,
-            model: item.equipments?.model || "Equipo desconocido",
-            desc: item.diagnostic ? `Último diagnóstico: ${item.diagnostic}` : item.maintenance_type,
-            date: new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+            model: item.equipments?.model || t('unknown_equipment'),
+            desc: item.diagnostic ? `${t('last_diagnostic')} ${item.diagnostic}` : item.maintenance_type,
+            date: new Date(item.date).toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
           }))
           setRecentAccess(formatted)
         }
@@ -112,13 +112,13 @@ export function Dashboard() {
           <CardContent className="relative flex p-6 min-h-[180px]">
             {/* Contenido de texto */}
             <div className="relative z-20 flex w-2/3 flex-col justify-center pr-4">
-              <h2 className="mb-2 text-xl font-bold text-white tracking-tight leading-tight">Diagnóstico inteligente</h2>
+              <h2 className="mb-2 text-xl font-bold text-white tracking-tight leading-tight">{t('smart_diagnostic')}</h2>
               <p className="mb-4 text-sm text-slate-300 leading-snug">
-                Resuelve fallas más rápido con ayuda de IA
+                {t('smart_diagnostic_desc')}
               </p>
               <div>
                 <Button onClick={() => navigate('/diagnostico')} className="bg-blue-600 hover:bg-blue-700 h-10 px-5 text-sm font-semibold shadow-md">
-                  Iniciar diagnóstico
+                  {t('start_diagnostic')}
                 </Button>
               </div>
             </div>
@@ -144,8 +144,8 @@ export function Dashboard() {
         transition={{ delay: 0.2 }}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Herramientas rápidas</h3>
-          <button onClick={() => navigate('/tools')} className="text-sm text-blue-500 hover:underline">Ver todo</button>
+          <h3 className="text-lg font-semibold text-white">{t('quick_tools')}</h3>
+          <button onClick={() => navigate('/tools')} className="text-sm text-blue-500 hover:underline">{t('view_all')}</button>
         </div>
         <div className="grid grid-cols-3 gap-3">
           {QUICK_TOOLS.map((tool, index) => {
@@ -160,7 +160,7 @@ export function Dashboard() {
                   <Icon size={24} />
                 </div>
                 <span className="text-[11px] font-medium leading-tight text-slate-300">
-                  {tool.label}
+                  {t(tool.key)}
                 </span>
               </button>
             )
@@ -175,8 +175,8 @@ export function Dashboard() {
         transition={{ delay: 0.3 }}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Accesos recientes</h3>
-          <button onClick={() => navigate('/history')} className="text-sm text-blue-500 hover:underline">Ver todo</button>
+          <h3 className="text-lg font-semibold text-white">{t('recent_access')}</h3>
+          <button onClick={() => navigate('/history')} className="text-sm text-blue-500 hover:underline">{t('view_all')}</button>
         </div>
         <div className="flex flex-col gap-3">
           {isLoading ? (
@@ -208,7 +208,7 @@ export function Dashboard() {
             ))
           ) : (
             <div className="text-center text-sm text-slate-500 py-4">
-              No hay equipos recientes
+              {t('no_recent_equipment')}
             </div>
           )}
         </div>

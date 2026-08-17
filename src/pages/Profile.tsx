@@ -1,16 +1,17 @@
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import { useSettings } from "../contexts/SettingsContext"
-import { ArrowLeft, User, LogOut, Mail, Settings, Shield, Image as ImageIcon, Globe } from "lucide-react"
+import { ArrowLeft, User, LogOut, Mail, Settings, Shield, Image as ImageIcon, Globe, ChevronDown, ChevronUp } from "lucide-react"
 import { Card, CardContent } from "../components/ui/card"
-import { motion } from "framer-motion"
-import { useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { useRef, useState } from "react"
 
 export function Profile() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const { language, setLanguage, setLogoUrl, t } = useSettings()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [showSettings, setShowSettings] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -65,62 +66,71 @@ export function Profile() {
               </p>
             </div>
 
-            <div className="p-4 flex flex-col gap-2">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-2">{t('customization')}</h3>
-              
-              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-900 border border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
-                    <ImageIcon size={18} />
-                  </div>
-                  <span className="font-medium text-sm text-slate-300">{t('upload_logo')}</span>
-                </div>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  ref={fileInputRef} 
-                  onChange={handleImageUpload} 
-                />
-                <button 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg transition-colors"
-                >
-                  Subir
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-900 border border-slate-800 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
-                    <Globe size={18} />
-                  </div>
-                  <span className="font-medium text-sm text-slate-300">{t('language')}</span>
-                </div>
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => setLanguage('es')}
-                    className={`px-3 py-1 text-xs rounded-lg transition-colors ${language === 'es' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
-                  >
-                    ES
-                  </button>
-                  <button 
-                    onClick={() => setLanguage('en')}
-                    className={`px-3 py-1 text-xs rounded-lg transition-colors ${language === 'en' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
-                  >
-                    EN
-                  </button>
-                </div>
-              </div>
-
-              <button className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-800 transition-colors text-slate-300">
+              <button 
+                onClick={() => setShowSettings(!showSettings)}
+                className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-800 transition-colors text-slate-300"
+              >
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-slate-800 rounded-lg text-slate-400">
                     <Settings size={18} />
                   </div>
                   <span className="font-medium text-sm">{t('settings')}</span>
                 </div>
+                {showSettings ? <ChevronUp size={18} className="text-slate-500" /> : <ChevronDown size={18} className="text-slate-500" />}
               </button>
+
+              {showSettings && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  className="flex flex-col gap-2 pl-4 pr-2 border-l-2 border-slate-800 ml-4 mb-2"
+                >
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800/50">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
+                        <ImageIcon size={16} />
+                      </div>
+                      <span className="font-medium text-xs text-slate-300">{t('upload_logo')}</span>
+                    </div>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      ref={fileInputRef} 
+                      onChange={handleImageUpload} 
+                    />
+                    <button 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg transition-colors"
+                    >
+                      Subir
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800/50">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
+                        <Globe size={16} />
+                      </div>
+                      <span className="font-medium text-xs text-slate-300">{t('language')}</span>
+                    </div>
+                    <div className="flex gap-1.5">
+                      <button 
+                        onClick={() => setLanguage('es')}
+                        className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${language === 'es' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                      >
+                        ES
+                      </button>
+                      <button 
+                        onClick={() => setLanguage('en')}
+                        className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${language === 'en' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                      >
+                        EN
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
               
               <button 
                 onClick={handleLogout}

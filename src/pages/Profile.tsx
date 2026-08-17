@@ -135,7 +135,7 @@ export function Profile() {
                   onChange={handleAvatarUpload} 
                 />
               </div>
-              <h2 className="text-xl font-bold text-white mb-1">Técnico</h2>
+              <h2 className="text-xl font-bold text-white mb-1">{t('technician')}</h2>
               <p className="text-slate-400 text-sm flex items-center gap-2">
                 <Mail size={14} />
                 {user?.email || "usuario@ejemplo.com"}
@@ -231,19 +231,19 @@ export function Profile() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <h3 className="text-sm font-semibold text-slate-400 mb-3 px-1 uppercase tracking-wider">Planes de Suscripción</h3>
+        <h3 className="text-sm font-semibold text-slate-400 mb-3 px-1 uppercase tracking-wider">{t('subscription_plans')}</h3>
         <div className="flex flex-col gap-4">
           
           {/* Plan Gratis */}
           <Card className="border-slate-800 bg-slate-900/50 relative overflow-hidden">
             <CardContent className="p-5 flex items-center justify-between">
               <div>
-                <h4 className="text-white font-bold text-lg mb-1">Plan Gratis</h4>
-                <p className="text-slate-400 text-xs">Funciones básicas para empezar</p>
+                <h4 className="text-white font-bold text-lg mb-1">{t('free_plan')}</h4>
+                <p className="text-slate-400 text-xs">{t('free_plan_desc')}</p>
               </div>
               <div className="text-right">
                 <span className="text-slate-400 text-xs line-through">US$ 0.00</span>
-                <p className="text-blue-500 font-bold text-lg">Actual</p>
+                <p className="text-blue-500 font-bold text-lg">{t('current_plan')}</p>
               </div>
             </CardContent>
           </Card>
@@ -251,50 +251,50 @@ export function Profile() {
           {/* Plan Pro */}
           <Card className="border-blue-500/50 bg-gradient-to-br from-blue-900/40 to-slate-900/80 relative overflow-hidden shadow-[0_0_15px_rgba(59,130,246,0.15)]">
             <div className="absolute top-0 right-0 bg-blue-600 text-[10px] font-bold px-3 py-1 text-white rounded-bl-lg uppercase tracking-wider">
-              Recomendado
+              {t('recommended')}
             </div>
             <CardContent className="p-5 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <h4 className="text-white font-bold text-lg">Plan Pro</h4>
+                  <h4 className="text-white font-bold text-lg">{t('pro_plan')}</h4>
                   <Shield size={16} className="text-blue-400" />
                 </div>
-                <p className="text-slate-300 text-xs mb-2">Todo ilimitado + IA y Soporte</p>
+                <p className="text-slate-300 text-xs mb-2">{t('pro_plan_desc')}</p>
                 <div className="flex flex-col gap-1.5 mt-3">
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Historial de equipos ilimitado</span>
+                    <span>{t('feature_unlimited_equipment')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Registro de clientes ilimitado</span>
+                    <span>{t('feature_unlimited_clients')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Diagnósticos con Inteligencia Artificial</span>
+                    <span>{t('feature_ai_diagnostics')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Generador de presupuestos y facturas en PDF</span>
+                    <span>{t('feature_pdf_generator')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Historial de presupuestos</span>
+                    <span>{t('feature_estimate_history')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Gestión de facturas (Pagadas / Pendientes)</span>
+                    <span>{t('feature_invoice_management')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                    <span>Acceso a códigos de error exclusivos</span>
+                    <span>{t('feature_error_codes')}</span>
                   </div>
                 </div>
               </div>
             </CardContent>
             <div className="p-4 border-t border-slate-800/50 bg-black/20">
               <button className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 transition-colors text-white text-sm font-semibold shadow-lg shadow-blue-500/20">
-                Mejorar a Pro - US$ 9.99/mes
+                {t('upgrade_to_pro')}
               </button>
             </div>
           </Card>

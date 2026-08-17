@@ -46,5 +46,18 @@
   "equipment_history": "Historial de equipos",
   "pending": "Pendientes",
   "paid": "Pagadas",
-  "collections": "Cobros"
+  "collections": "Cobros",
+  "free_plan_desc": "Funciones básicas para empezar",
+  "current_plan": "Actual",
+  "recommended": "Recomendado",
+  "pro_plan_desc": "Todo ilimitado + IA y Soporte",
+  "feature_unlimited_equipment": "Historial de equipos ilimitado",
+  "feature_unlimited_clients": "Registro de clientes ilimitado",
+  "feature_ai_diagnostics": "Diagnósticos con Inteligencia Artificial",
+  "feature_pdf_generator": "Generador de presupuestos y facturas en PDF",
+  "feature_estimate_history": "Historial de presupuestos",
+  "feature_invoice_management": "Gestión de facturas (Pagadas / Pendientes)",
+  "feature_error_codes": "Acceso a códigos de error exclusivos",
+  "upgrade_to_pro": "Mejorar a Pro - US$ 9.99/mes",
+  "technician": "Técnico"
 }

@@ -46,5 +46,18 @@
   "equipment_history": "Equipment History",
   "pending": "Pending",
   "paid": "Paid",
-  "collections": "Collections"
+  "collections": "Collections",
+  "free_plan_desc": "Basic features to get started",
+  "current_plan": "Current",
+  "recommended": "Recommended",
+  "pro_plan_desc": "Everything unlimited + AI & Support",
+  "feature_unlimited_equipment": "Unlimited equipment history",
+  "feature_unlimited_clients": "Unlimited client registry",
+  "feature_ai_diagnostics": "Artificial Intelligence diagnostics",
+  "feature_pdf_generator": "PDF estimate and invoice generator",
+  "feature_estimate_history": "Estimates history",
+  "feature_invoice_management": "Invoice management (Paid / Pending)",
+  "feature_error_codes": "Access to exclusive error codes",
+  "upgrade_to_pro": "Upgrade to Pro - US$ 9.99/month",
+  "technician": "Technician"
 }

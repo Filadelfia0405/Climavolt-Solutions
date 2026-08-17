@@ -74,6 +74,67 @@ export function Profile() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Subscription Plans Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <h3 className="text-sm font-semibold text-slate-400 mb-3 px-1 uppercase tracking-wider">Planes de Suscripción</h3>
+        <div className="flex flex-col gap-4">
+          
+          {/* Plan Gratis */}
+          <Card className="border-slate-800 bg-slate-900/50 relative overflow-hidden">
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <h4 className="text-white font-bold text-lg mb-1">Plan Gratis</h4>
+                <p className="text-slate-400 text-xs">Funciones básicas para empezar</p>
+              </div>
+              <div className="text-right">
+                <span className="text-slate-400 text-xs line-through">US$ 0.00</span>
+                <p className="text-blue-500 font-bold text-lg">Actual</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Plan Pro */}
+          <Card className="border-blue-500/50 bg-gradient-to-br from-blue-900/40 to-slate-900/80 relative overflow-hidden shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+            <div className="absolute top-0 right-0 bg-blue-600 text-[10px] font-bold px-3 py-1 text-white rounded-bl-lg uppercase tracking-wider">
+              Recomendado
+            </div>
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="text-white font-bold text-lg">Plan Pro</h4>
+                  <Shield size={16} className="text-blue-400" />
+                </div>
+                <p className="text-slate-300 text-xs mb-2">Todo ilimitado + IA y Soporte</p>
+                <div className="flex flex-col gap-1 mt-3">
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span>Historial de equipos ilimitado</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span>Diagnósticos con Inteligencia Artificial</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <span>Generador de presupuestos PDF</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <div className="p-4 border-t border-slate-800/50 bg-black/20">
+              <button className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 transition-colors text-white text-sm font-semibold shadow-lg shadow-blue-500/20">
+                Mejorar a Pro - US$ 9.99/mes
+              </button>
+            </div>
+          </Card>
+          
+        </div>
+      </motion.div>
     </div>
   )
 }

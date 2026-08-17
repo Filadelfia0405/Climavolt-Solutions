@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext"
 import { useSettings } from "../contexts/SettingsContext"
 import { ArrowLeft, User, LogOut, Mail, Settings, Shield, Image as ImageIcon, Globe, ChevronDown, ChevronUp } from "lucide-react"
 import { Card, CardContent } from "../components/ui/card"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useRef, useState } from "react"
 
 export function Profile() {

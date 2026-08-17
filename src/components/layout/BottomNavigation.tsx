@@ -16,8 +16,9 @@ export function BottomNavigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-between border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md sm:hidden">
-      {NAV_ITEMS.map((item) => {
+    <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-center gap-2 md:gap-8 lg:gap-16 border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md">
+      <div className="flex w-full max-w-lg items-center justify-between">
+        {NAV_ITEMS.map((item) => {
         const isActive = location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(item.path));
         const Icon = item.icon;
 
@@ -54,6 +55,7 @@ export function BottomNavigation() {
           </Link>
         );
       })}
+      </div>
     </nav>
   );
 }

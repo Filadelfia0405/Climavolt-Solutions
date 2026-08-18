@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Calendar as CalendarIcon, Plus, MapPin, Clock, FileText, CheckCircle2, XCircle, Trash2 } from "lucide-react"
+import { ArrowLeft, Calendar as CalendarIcon, Plus, MapPin, Clock, FileText, CheckCircle2, XCircle, Trash2, CalendarPlus, MessageCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../contexts/AuthContext"
@@ -127,6 +127,47 @@ export function Agenda() {
     }
   }
 
+  const generateICS = (appt: Appointment) => {
+    const [year, month, day] = appt.date.split('-');
+    const [hour, minute] = appt.time.split(':');
+    
+    // Floating time (uses device's local timezone)
+    const dtstart = `${year}${month}${day}T${hour}${minute}00`;
+    
+    // End time (1 hour later)
+    const endHour = String((parseInt(hour) + 1) % 24).padStart(2, '0');
+    const dtend = `${year}${month}${day}T${endHour}${minute}00`;
+
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:Servicio: ${appt.client_name} - ${appt.service_type}
+DTSTART:${dtstart}
+DTEND:${dtend}
+DESCRIPTION:${appt.notes || 'Cita programada desde la app'}
+LOCATION:${appt.address || ''}
+BEGIN:VALARM
+TRIGGER:-PT1440M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio: Mañana tienes servicio con ${appt.client_name}
+END:VALARM
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.setAttribute('download', `Cita_${appt.client_name.replace(/\s+/g, '_')}.ics`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const sendWhatsAppReminder = (appt: Appointment) => {
+    const text = encodeURIComponent(`Hola ${appt.client_name}, te escribo para recordarte que tenemos programado un servicio de ${appt.service_type} mañana a las ${appt.time.substring(0, 5)}. ¡Saludos!`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  };
+
   // Agrupar citas por fecha
   const groupedAppointments = appointments.reduce((acc, appt) => {
     if (!acc[appt.date]) acc[appt.date] = []
@@ -212,6 +253,17 @@ export function Agenda() {
                           <span className="line-clamp-2">{appt.notes}</span>
                         </div>
                       )}
+                    </div>
+
+                    <div className="flex gap-2 mb-4 border-t border-slate-800 pt-3">
+                      <button onClick={() => generateICS(appt)} className="flex-1 flex items-center justify-center gap-2 p-2 text-blue-400 bg-blue-400/10 hover:bg-blue-400/20 rounded-lg transition-colors text-xs font-medium">
+                        <CalendarPlus size={14} />
+                        Añadir a Calendario
+                      </button>
+                      <button onClick={() => sendWhatsAppReminder(appt)} className="flex-1 flex items-center justify-center gap-2 p-2 text-green-400 bg-green-400/10 hover:bg-green-400/20 rounded-lg transition-colors text-xs font-medium">
+                        <MessageCircle size={14} />
+                        Recordar Cliente
+                      </button>
                     </div>
 
                     <div className="flex justify-end gap-2 border-t border-slate-800 pt-3">

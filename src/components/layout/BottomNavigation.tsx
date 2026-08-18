@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from "react";
 import { Home, Wrench, PlusCircle, Users, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "../../lib/utils";
@@ -6,6 +7,40 @@ import { useSettings } from "../../contexts/SettingsContext";
 export function BottomNavigation() {
   const location = useLocation();
   const { t } = useSettings();
+  const [isVisible, setIsVisible] = useState(true);
+
+  const resetTimer = useCallback(() => {
+    setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const handleActivity = () => {
+      setIsVisible(true);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsVisible(false);
+      }, 5000);
+    };
+
+    // Initialize the timer
+    handleActivity();
+
+    // Add event listeners for user activity
+    window.addEventListener('touchstart', handleActivity, { passive: true });
+    window.addEventListener('click', handleActivity, { passive: true });
+    window.addEventListener('scroll', handleActivity, { passive: true });
+    window.addEventListener('mousemove', handleActivity, { passive: true });
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('touchstart', handleActivity);
+      window.removeEventListener('click', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+      window.removeEventListener('mousemove', handleActivity);
+    };
+  }, []);
 
   const NAV_ITEMS = [
     { icon: Home, label: t("home"), path: "/" },
@@ -16,7 +51,10 @@ export function BottomNavigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-center gap-2 md:gap-8 lg:gap-16 border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md">
+    <nav className={cn(
+      "fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-center gap-2 md:gap-8 lg:gap-16 border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md transition-transform duration-500 ease-in-out",
+      isVisible ? "translate-y-0" : "translate-y-full"
+    )}>
       <div className="flex w-full max-w-lg items-center justify-between">
         {NAV_ITEMS.map((item) => {
         const isActive = location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(item.path));

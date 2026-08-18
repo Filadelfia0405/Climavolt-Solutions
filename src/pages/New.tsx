@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, FileText, DollarSign, Users, Wrench } from "lucide-react"
+import { ArrowLeft, FileText, DollarSign, Users, Wrench, Calendar } from "lucide-react"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"
 
@@ -42,6 +42,15 @@ export function New() {
       bgLight: "bg-indigo-500/20",
       textLight: "text-indigo-500",
       path: "/clients"
+    },
+    {
+      title: "Nueva Cita",
+      description: "Agendar un servicio en tu calendario",
+      icon: Calendar,
+      color: "bg-purple-500",
+      bgLight: "bg-purple-500/20",
+      textLight: "text-purple-500",
+      path: "/agenda"
     }
   ]
 

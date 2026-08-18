@@ -10,16 +10,51 @@ export function BottomNavigation() {
   const navigate = useNavigate();
   const { t } = useSettings();
   const [showNewMenu, setShowNewMenu] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(true);
 
+  // Auto-hide the entire bottom navigation bar
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const handleActivity = () => {
+      setIsNavVisible(true);
+      clearTimeout(timeoutId);
+      // Solo ocultar si no está abierto el menú popup
+      timeoutId = setTimeout(() => {
+        setIsNavVisible(false);
+      }, 5000);
+    };
+
+    handleActivity();
+
+    window.addEventListener('touchstart', handleActivity, { passive: true });
+    window.addEventListener('click', handleActivity, { passive: true });
+    window.addEventListener('scroll', handleActivity, { passive: true });
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('touchstart', handleActivity);
+      window.removeEventListener('click', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+    };
+  }, []);
+
+  // Auto-hide the "New" popup menu
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (showNewMenu) {
-      // Auto-hide the menu after 5 seconds
       timeoutId = setTimeout(() => {
         setShowNewMenu(false);
       }, 5000);
     }
     return () => clearTimeout(timeoutId);
+  }, [showNewMenu]);
+
+  // Si el menú popup se abre, aseguramos que la barra sea visible
+  useEffect(() => {
+    if (showNewMenu) {
+      setIsNavVisible(true);
+    }
   }, [showNewMenu]);
 
   const NAV_ITEMS = [
@@ -83,7 +118,10 @@ export function BottomNavigation() {
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-center gap-2 md:gap-8 lg:gap-16 border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md">
+      <nav className={cn(
+        "fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-center gap-2 md:gap-8 lg:gap-16 border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md transition-transform duration-500 ease-in-out",
+        isNavVisible ? "translate-y-0" : "translate-y-32"
+      )}>
         <div className="flex w-full max-w-lg items-center justify-between">
           {NAV_ITEMS.map((item, index) => {
           const isActive = item.path ? (location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(item.path))) : false;

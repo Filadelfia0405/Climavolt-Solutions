@@ -14,7 +14,7 @@ export function BottomNavigation() {
 
   // Auto-hide the entire bottom navigation bar
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const handleActivity = () => {
       setIsNavVisible(true);
@@ -41,7 +41,7 @@ export function BottomNavigation() {
 
   // Auto-hide the "New" popup menu
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     if (showNewMenu) {
       timeoutId = setTimeout(() => {
         setShowNewMenu(false);

@@ -9,6 +9,7 @@ const ALL_TOOLS = [
   { icon: Users, key: "clients", color: "bg-indigo-500/20 text-indigo-500", path: "/clients" },
   { icon: FileText, key: "billing", color: "bg-yellow-500/20 text-yellow-500", path: "/billing" },
   { icon: BookOpen, key: "manuals", color: "bg-blue-500/20 text-blue-500", path: "/manuals" },
+  { icon: BookOpen, key: "agenda", color: "bg-purple-500/20 text-purple-500", path: "/agenda" },
   { icon: DollarSign, key: "estimates", color: "bg-orange-500/20 text-orange-500", path: "/presupuestos" },
   { icon: FileText, key: "estimate_history", color: "bg-amber-500/20 text-amber-500", path: "/estimate-history" },
   { icon: ClipboardList, key: "equipment_history", color: "bg-teal-500/20 text-teal-500", path: "/history" },

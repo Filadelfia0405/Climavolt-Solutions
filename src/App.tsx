@@ -22,6 +22,7 @@ import { Profile } from "./pages/Profile"
 import { New } from "./pages/New"
 import { Community } from "./pages/Community"
 import { Manuals } from "./pages/Manuals"
+import { Agenda } from "./pages/Agenda"
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
                 <Route path="/nuevo" element={<New />} />
                 <Route path="/comunidad" element={<Community />} />
                 <Route path="/manuals" element={<Manuals />} />
+                <Route path="/agenda" element={<Agenda />} />
               </Route>
             </Route>
           </Routes>

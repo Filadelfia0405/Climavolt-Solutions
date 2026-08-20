@@ -98,9 +98,9 @@ export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, sub
               <tr key={idx} className="border-b border-gray-200">
                 <td className="py-3 px-4">{item.description || 'Servicio General'}</td>
                 <td className="py-3 px-4 text-center">{item.quantity}</td>
-                <td className="py-3 px-4 text-right">RD$ {item.unitPrice.toFixed(2)}</td>
+                <td className="py-3 px-4 text-right">RD$ {item.unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 <td className="py-3 px-4 text-right">{item.discountPercentage ? `${item.discountPercentage}%` : '-'}</td>
-                <td className="py-3 px-4 text-right">RD$ {finalTotal.toFixed(2)}</td>
+                <td className="py-3 px-4 text-right">RD$ {finalTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
               </tr>
             );
           })}
@@ -117,21 +117,21 @@ export const InvoicePrint: React.FC<InvoicePrintProps> = ({ formData, items, sub
               <>
                 <div className="flex justify-between py-2 text-sm text-gray-700 border-b border-gray-200">
                   <span>Subtotal:</span>
-                  <span>RD$ {grossSubtotal.toFixed(2)}</span>
+                  <span>RD$ {grossSubtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 </div>
                 {totalDiscount > 0 && (
                   <div className="flex justify-between py-2 text-sm text-red-600 border-b border-gray-200">
                     <span>Descuento Aplicado:</span>
-                    <span>- RD$ {totalDiscount.toFixed(2)}</span>
+                    <span>- RD$ {totalDiscount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                   </div>
                 )}
                 <div className="flex justify-between py-2 text-sm text-gray-700 border-b border-gray-200">
                   <span>ITBIS (18%):</span>
-                  <span>RD$ {tax.toFixed(2)}</span>
+                  <span>RD$ {tax.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 </div>
                 <div className="flex justify-between py-3 text-lg font-bold text-blue-600">
                   <span>TOTAL:</span>
-                  <span>RD$ {total.toFixed(2)}</span>
+                  <span>RD$ {total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 </div>
               </>
             );

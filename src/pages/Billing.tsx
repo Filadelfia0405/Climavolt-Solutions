@@ -551,7 +551,7 @@ export function Billing() {
                     />
                   </td>
                   <td className="px-4 py-2 text-right font-medium text-white">
-                    ${(item.quantity * item.unitPrice).toFixed(2)}
+                    ${(item.quantity * item.unitPrice).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                   </td>
                   <td className="pr-2 text-right">
                     <button onClick={() => removeItem(item.id)} className="text-slate-500 hover:text-red-500 transition-colors">
@@ -632,7 +632,7 @@ export function Billing() {
             <div className="rounded-lg overflow-hidden border border-blue-900/50 bg-slate-800/50">
                <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
                  <span className="text-sm font-semibold text-slate-300">SUBTOTAL</span>
-                 <span className="text-sm font-bold text-white">RD$ {subtotal.toFixed(2)}</span>
+                 <span className="text-sm font-bold text-white">RD$ {subtotal.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                </div>
                <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
                  <div className="flex items-center gap-2">
@@ -644,11 +644,11 @@ export function Billing() {
                    />
                    <span className="text-sm font-semibold text-slate-300">ITBIS (18%)</span>
                  </div>
-                 <span className="text-sm font-bold text-white">RD$ {tax.toFixed(2)}</span>
+                 <span className="text-sm font-bold text-white">RD$ {tax.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                </div>
                <div className="flex justify-between items-center px-4 py-4 bg-blue-600">
                  <span className="text-base font-bold text-white">TOTAL GENERAL</span>
-                 <span className="text-lg font-bold text-white">RD$ {total.toFixed(2)}</span>
+                 <span className="text-lg font-bold text-white">RD$ {total.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                </div>
             </div>
 

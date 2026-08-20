@@ -143,7 +143,7 @@ export function InvoiceHistory() {
                     </div>
                     
                     <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 w-full sm:w-auto">
-                      <span className="text-base font-bold text-white">RD$ {invoice.total.toFixed(2)}</span>
+                      <span className="text-base font-bold text-white">RD$ {invoice.total.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                       <div className="flex gap-2">
                         {invoice.status === 'pending' && (
                           <button 

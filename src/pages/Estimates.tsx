@@ -568,7 +568,7 @@ export function Estimates() {
                     />
                   </td>
                   <td className="px-4 py-2 text-right font-medium text-white">
-                    ${((item.quantity * item.unitPrice) * (1 - (item.discountPercentage || 0) / 100)).toFixed(2)}
+                    ${((item.quantity * item.unitPrice) * (1 - (item.discountPercentage || 0) / 100)).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                   </td>
                   <td className="pr-2 text-right">
                     <button onClick={() => removeItem(item.id)} className="text-slate-500 hover:text-red-500 transition-colors">
@@ -649,12 +649,12 @@ export function Estimates() {
             <div className="rounded-lg overflow-hidden border border-blue-900/50 bg-slate-800/50">
                <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
                  <span className="text-sm font-semibold text-slate-300">SUBTOTAL</span>
-                 <span className="text-sm font-bold text-white">RD$ {grossSubtotal.toFixed(2)}</span>
+                 <span className="text-sm font-bold text-white">RD$ {grossSubtotal.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                </div>
                {totalDiscount > 0 && (
                  <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
                    <span className="text-sm font-semibold text-red-400">DESCUENTO</span>
-                   <span className="text-sm font-bold text-red-400">- RD$ {totalDiscount.toFixed(2)}</span>
+                   <span className="text-sm font-bold text-red-400">- RD$ {totalDiscount.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                  </div>
                )}
                <div className="flex justify-between items-center px-4 py-3 border-b border-slate-700">
@@ -667,11 +667,11 @@ export function Estimates() {
                    />
                    <span className="text-sm font-semibold text-slate-300">ITBIS (18%)</span>
                  </div>
-                 <span className="text-sm font-bold text-white">RD$ {tax.toFixed(2)}</span>
+                 <span className="text-sm font-bold text-white">RD$ {tax.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                </div>
                <div className="flex justify-between items-center px-4 py-4 bg-blue-600">
                  <span className="text-base font-bold text-white">TOTAL GENERAL</span>
-                 <span className="text-lg font-bold text-white">RD$ {total.toFixed(2)}</span>
+                 <span className="text-lg font-bold text-white">RD$ {total.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                </div>
             </div>
 

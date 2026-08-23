@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, MessageSquare, ThumbsUp, Share2, Search, Plus, X } from "lucide-react"
 import { Card, CardContent } from "../components/ui/card"
 import { motion, AnimatePresence } from "framer-motion"
+import { useSettings } from "../contexts/SettingsContext"
 
 interface Post {
   id: number
@@ -15,52 +16,60 @@ interface Post {
   tags: string[]
 }
 
-const INITIAL_POSTS: Post[] = [
-  {
-    id: 1,
-    author: "Carlos Técnico",
-    avatar: "CT",
-    time: "Hace 2 horas",
-    content: "Compañeros, ¿alguien ha tenido problemas con la tarjeta inverter de un LG Dual Inverter 18K? Me marca error CH38 pero las presiones están normales.",
-    likes: 12,
-    comments: 5,
-    tags: ["Dudas"]
-  },
-  {
-    id: 2,
-    author: "Mantenimiento Pro",
-    avatar: "MP",
-    time: "Hace 5 horas",
-    content: "Hoy realicé un mantenimiento profundo a un equipo de 5 toneladas. Recuerden siempre verificar los capacitores del fan exterior, estaban a punto de fallar por el calor de estos días.",
-    likes: 24,
-    comments: 2,
-    tags: ["Tips"]
-  },
-  {
-    id: 3,
-    author: "Refrigeración Express",
-    avatar: "RE",
-    time: "Ayer",
-    content: "¿Qué marca de gas refrigerante R-410A están recomendando actualmente? He notado variaciones de calidad en los cilindros genéricos.",
-    likes: 8,
-    comments: 14,
-    tags: ["Repuestos"]
-  }
-]
-
-const TAGS = ["Todos", "Dudas", "Tips", "Herramientas", "Repuestos"]
-
 export function Community() {
   const navigate = useNavigate()
+  const { t } = useSettings()
+
+  const INITIAL_POSTS: Post[] = useMemo(() => [
+    {
+      id: 1,
+      author: t("author_1") || "Carlos Técnico",
+      avatar: "CT",
+      time: t("post_1_time") || "Hace 2 horas",
+      content: t("post_1_content") || "Compañeros, ¿alguien ha tenido problemas con la tarjeta inverter de un LG Dual Inverter 18K? Me marca error CH38 pero las presiones están normales.",
+      likes: 12,
+      comments: 5,
+      tags: [t("tag_doubts") || "Dudas"]
+    },
+    {
+      id: 2,
+      author: t("author_2") || "Mantenimiento Pro",
+      avatar: "MP",
+      time: t("post_2_time") || "Hace 5 horas",
+      content: t("post_2_content") || "Hoy realicé un mantenimiento profundo a un equipo de 5 toneladas. Recuerden siempre verificar los capacitores del fan exterior, estaban a punto de fallar por el calor de estos días.",
+      likes: 24,
+      comments: 2,
+      tags: [t("tag_tips") || "Tips"]
+    },
+    {
+      id: 3,
+      author: t("author_3") || "Refrigeración Express",
+      avatar: "RE",
+      time: t("post_3_time") || "Ayer",
+      content: t("post_3_content") || "¿Qué marca de gas refrigerante R-410A están recomendando actualmente? He notado variaciones de calidad en los cilindros genéricos.",
+      likes: 8,
+      comments: 14,
+      tags: [t("tag_spare_parts") || "Repuestos"]
+    }
+  ], [t])
+
+  const TAGS = useMemo(() => [
+    t("tag_all") || "Todos",
+    t("tag_doubts") || "Dudas",
+    t("tag_tips") || "Tips",
+    t("tag_tools") || "Herramientas",
+    t("tag_spare_parts") || "Repuestos"
+  ], [t])
+
   const [searchTerm, setSearchTerm] = useState("")
-  const [activeTag, setActiveTag] = useState("Todos")
+  const [activeTag, setActiveTag] = useState(TAGS[0])
   const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS)
   const [showNewPostModal, setShowNewPostModal] = useState(false)
   const [newPostContent, setNewPostContent] = useState("")
-  const [newPostTag, setNewPostTag] = useState("Dudas")
+  const [newPostTag, setNewPostTag] = useState(TAGS[1])
 
   const filteredPosts = posts.filter(post => {
-    const matchesTag = activeTag === "Todos" || post.tags.includes(activeTag)
+    const matchesTag = activeTag === TAGS[0] || post.tags.includes(activeTag)
     const matchesSearch = post.content.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           post.author.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesTag && matchesSearch
@@ -72,9 +81,9 @@ export function Community() {
 
     const newPost: Post = {
       id: Date.now(),
-      author: "Técnico (Tú)",
+      author: t("technician_you") || "Técnico (Tú)",
       avatar: "T",
-      time: "Justo ahora",
+      time: t("just_now") || "Justo ahora",
       content: newPostContent,
       likes: 0,
       comments: 0,
@@ -103,14 +112,14 @@ export function Community() {
           <button onClick={() => navigate(-1)} className="p-2 text-slate-300 hover:text-white -ml-2">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold text-white">Comunidad</h1>
+          <h1 className="text-lg font-semibold text-white">{t("community") || "Comunidad"}</h1>
         </div>
         <button 
           onClick={() => setShowNewPostModal(true)}
           className="flex h-8 items-center gap-1 rounded-lg bg-blue-600 px-3 text-xs font-medium text-white hover:bg-blue-700"
         >
           <Plus size={14} />
-          Crear Post
+          {t("create_post") || "Crear Post"}
         </button>
       </header>
 
@@ -119,7 +128,7 @@ export function Community() {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
         <input
           type="text"
-          placeholder="Buscar consultas, marcas o errores..."
+          placeholder={t("search_community") || "Buscar consultas, marcas o errores..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-12 pr-4 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -147,7 +156,7 @@ export function Community() {
       <div className="flex flex-col gap-4">
         {filteredPosts.length === 0 ? (
           <div className="text-center py-10 text-slate-500 text-sm">
-            No se encontraron publicaciones.
+            {t("no_posts_found") || "No se encontraron publicaciones."}
           </div>
         ) : (
           filteredPosts.map((post, index) => (
@@ -224,7 +233,7 @@ export function Community() {
               className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl"
             >
               <div className="flex items-center justify-between p-4 border-b border-slate-800">
-                <h3 className="text-lg font-semibold text-white">Crear Publicación</h3>
+                <h3 className="text-lg font-semibold text-white">{t("create_post_title") || "Crear Publicación"}</h3>
                 <button 
                   onClick={() => setShowNewPostModal(false)}
                   className="text-slate-400 hover:text-white transition-colors"
@@ -235,22 +244,22 @@ export function Community() {
               
               <form onSubmit={handleCreatePost} className="p-4 flex flex-col gap-4">
                 <div>
-                  <label className="text-xs font-medium text-slate-400 mb-1 block">Categoría</label>
+                  <label className="text-xs font-medium text-slate-400 mb-1 block">{t("category") || "Categoría"}</label>
                   <select 
                     value={newPostTag}
                     onChange={(e) => setNewPostTag(e.target.value)}
                     className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
-                    {TAGS.filter(t => t !== "Todos").map(tag => (
+                    {TAGS.filter(t => t !== TAGS[0]).map(tag => (
                       <option key={tag} value={tag}>{tag}</option>
                     ))}
                   </select>
                 </div>
                 
                 <div>
-                  <label className="text-xs font-medium text-slate-400 mb-1 block">Contenido</label>
+                  <label className="text-xs font-medium text-slate-400 mb-1 block">{t("content") || "Contenido"}</label>
                   <textarea
-                    placeholder="Escribe tu consulta, tip o recomendación aquí..."
+                    placeholder={t("post_placeholder") || "Escribe tu consulta, tip o recomendación aquí..."}
                     rows={4}
                     value={newPostContent}
                     onChange={(e) => setNewPostContent(e.target.value)}
@@ -265,13 +274,13 @@ export function Community() {
                     onClick={() => setShowNewPostModal(false)}
                     className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white"
                   >
-                    Cancelar
+                    {t("cancel") || "Cancelar"}
                   </button>
                   <button
                     type="submit"
                     className="rounded-xl bg-blue-600 px-6 py-2 text-sm font-medium text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-colors"
                   >
-                    Publicar
+                    {t("publish") || "Publicar"}
                   </button>
                 </div>
               </form>

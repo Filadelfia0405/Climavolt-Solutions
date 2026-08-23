@@ -119,10 +119,10 @@ export function BottomNavigation() {
       </AnimatePresence>
 
       <nav className={cn(
-        "fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-center gap-2 md:gap-8 lg:gap-16 border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md transition-transform duration-500 ease-in-out",
+        "fixed bottom-0 left-0 right-0 mx-auto w-full max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl z-50 flex h-20 items-center justify-center gap-2 md:gap-8 lg:gap-16 border-t border-slate-800 bg-slate-950/80 px-4 pb-2 backdrop-blur-md transition-transform duration-500 ease-in-out sm:border-x sm:border-slate-800",
         isNavVisible ? "translate-y-0" : "translate-y-32"
       )}>
-        <div className="flex w-full max-w-lg items-center justify-between">
+        <div className="flex w-full max-w-2xl items-center justify-between">
           {NAV_ITEMS.map((item, index) => {
           const isActive = item.path ? (location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(item.path))) : false;
           const Icon = item.icon;

@@ -119,9 +119,21 @@ export function InvoiceHistory() {
         </div>
       ) : (
         <div className="space-y-6">
-          {(Object.entries(groupedInvoices) as [string, any[]][]).map(([month, monthInvoices]) => (
+          {(Object.entries(groupedInvoices) as [string, any[]][]).map(([month, monthInvoices]) => {
+            const totalPaid = monthInvoices
+              .filter(invoice => invoice.status === 'paid')
+              .reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+            
+            return (
             <div key={month}>
-              <h2 className="text-sm font-bold text-blue-400 mb-3 ml-1 uppercase">{month}</h2>
+              <div className="flex items-center justify-between mb-3 ml-1">
+                <h2 className="text-sm font-bold text-blue-400 uppercase">{month}</h2>
+                {totalPaid > 0 && (
+                  <span className="text-sm font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-md">
+                    RD$ {totalPaid.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                  </span>
+                )}
+              </div>
               <div className="flex flex-col gap-3">
                 {monthInvoices.map((invoice: any) => (
                   <div 
@@ -166,7 +178,8 @@ export function InvoiceHistory() {
                 ))}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

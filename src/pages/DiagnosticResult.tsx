@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { ArrowLeft, MessageCircle, ChevronRight, Activity, Zap, Cpu, Settings, Loader2, AlertTriangle, X, BookOpen } from "lucide-react"
+import { ArrowLeft, MessageCircle, Activity, Zap, Cpu, Settings, Loader2, AlertTriangle, X, BookOpen } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent } from "../components/ui/card"
